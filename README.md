@@ -5,11 +5,11 @@
 ## 강의 목차 및 수강 현황
 
 ### Part 1. Android 개발 들어가기에 앞서
-- [ ] Ch 01. Kotlin
-- [ ] Ch 02. Hello World, Android
+- [X] Ch 01. Kotlin `2022.02.03`
+- [X] Ch 02. Hello World, Android `2022.02.03`
 
 ### Part 2. Basic
-- [ ] Ch 01. BMI 계산기
+- [ ] Ch 01. BMI 계산기 `2022.02.03 ~ `
 - [ ] Ch 02. 로또 번호 추첨기
 - [ ] Ch 03. 비밀 다이어리
 - [ ] Ch 04. 계산기
