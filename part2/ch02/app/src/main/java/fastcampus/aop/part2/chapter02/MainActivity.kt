@@ -51,6 +51,7 @@ class MainActivity : AppCompatActivity() {
 
         initRunButton()
         initAddButton()
+        initClearButton()
     }
 
     private fun initRunButton() {
@@ -59,6 +60,12 @@ class MainActivity : AppCompatActivity() {
 
             didRun = true
 
+            list.forEachIndexed { index, number ->
+                val textView = numberTextViewList[index]
+
+                textView.isVisible = true
+                textView.text = number.toString()
+            }
             Log.d("MainActivity", list.toString())
         }
     }
@@ -88,15 +95,31 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun initClearButton() {
+        clearButton.setOnClickListener {
+            pickNumberSet.clear()
+            numberTextViewList.forEach {
+                it.isVisible = false
+            }
+
+            didRun = false
+        }
+    }
+
     private fun getRandomNumber(): List<Int> {
         val numbers = mutableListOf<Int>()
             .apply {
                 for (i in 1..45) {
+                    if (pickNumberSet.contains(i)) {
+                        continue
+                    }
+
                     this.add(i)
                 }
             }
 
         numbers.shuffle()
-        return numbers.subList(0, 6).sorted()
+
+        return (pickNumberSet.toList() + numbers.subList(0, 6 - pickNumberSet.size)).sorted()
     }
 }
