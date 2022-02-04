@@ -3,4 +3,6 @@
     <string name="height">신장</string>
     <string name="weight">체중</string>
     <string name="confirm">확인하기</string>
+    <string name="bmi">BMI 수치:</string>
+    <string name="bmi_result">결과:</string>
 </resources>
