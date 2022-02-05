@@ -1,6 +1,7 @@
 package fastcampus.aop.part2.chapter03
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -65,11 +66,8 @@ class MainActivity : AppCompatActivity() {
                 "${numberPicker1.value}${numberPicker2.value}${numberPicker3.value}"
 
             if (passwordPreference.getString("password", "000").equals(passwordFromUser)) {
-                // 잠금 해제 성공
-                // TODO 다이어리 페이지 작성 후에 넘겨주어야 함
-                // startActivity()
+                startActivity(Intent(this, DiaryActivity::class.java))
             } else {
-                // 잠금 해제 실패
                 showErrorAlertDialog()
             }
         }
@@ -80,7 +78,6 @@ class MainActivity : AppCompatActivity() {
                 "${numberPicker1.value}${numberPicker2.value}${numberPicker3.value}"
 
             if (changePasswordMode) {
-                // 변경된 비밀번호 저장
                 passwordPreference.edit(true) {
                     putString("password", passwordFromUser)
                 }
@@ -88,7 +85,6 @@ class MainActivity : AppCompatActivity() {
                 changePasswordMode = false
                 changePasswordButton.setBackgroundColor(Color.BLACK)
             } else {
-                // 비밀번호 체크 후, changePasswordMode 활성화
                 if (passwordPreference.getString("password", "000").equals(passwordFromUser)) {
                     changePasswordMode = true
                     Toast.makeText(this, "변경할 비밀번호를 입력해주세요", Toast.LENGTH_SHORT).show()
