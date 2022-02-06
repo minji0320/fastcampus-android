@@ -8,7 +8,7 @@ import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
-import kotlin.math.exp
+import java.lang.NumberFormatException
 
 class MainActivity : AppCompatActivity() {
 
@@ -56,17 +56,17 @@ class MainActivity : AppCompatActivity() {
 
         isOperator = false
 
-        val expressionText = expressionTextView.text.split(" ")
-        if (expressionText.isNotEmpty() && expressionText.last().length >= 15) {
+        val expressionTexts = expressionTextView.text.split(" ")
+        if (expressionTexts.isNotEmpty() && expressionTexts.last().length >= 15) {
             Toast.makeText(this, "15자리 까지만 사용할 수 있습니다.", Toast.LENGTH_SHORT).show()
             return
-        } else if (expressionText.last().isEmpty() && number == "0") {
+        } else if (expressionTexts.last().isEmpty() && number == "0") {
             Toast.makeText(this, "0은 제일 앞에 올 수 없습니다.", Toast.LENGTH_SHORT).show()
             return
         }
 
         expressionTextView.append(number)
-        // TODO resultTextView 실시간으로 계산 결과를 넣어야 하는 기능
+        resultTextView.text = calculateExpression()
     }
 
     private fun operatorButtonClicked(operator: String) {
@@ -98,11 +98,56 @@ class MainActivity : AppCompatActivity() {
 
         isOperator = true
         hasOperator = true
-
     }
 
     fun resultButtonClicked(v: View) {
+        val expressionTexts = expressionTextView.text.split(" ")
 
+        if (expressionTextView.text.isEmpty() || expressionTexts.size == 1) {
+            return
+        }
+
+        if (expressionTexts.size != 3 && hasOperator) {
+            Toast.makeText(this, "아직 완성되지 않은 수식입니다.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (!expressionTexts[0].isNumber() || !expressionTexts[2].isNumber()) {
+            Toast.makeText(this, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val expressionText = expressionTextView.text.toString()
+        val resultText = calculateExpression()
+
+        resultTextView.text = ""
+        expressionTextView.text = resultText
+
+        isOperator = false
+        hasOperator = false
+    }
+
+    private fun calculateExpression(): String {
+        val expressionTexts = expressionTextView.text.split(" ")
+
+        if (!hasOperator || expressionTexts.size != 3) {
+            return ""
+        } else if (!expressionTexts[0].isNumber() || !expressionTexts[2].isNumber()) {
+            return ""
+        }
+
+        val exp1 = expressionTexts[0].toBigDecimal()
+        val exp2 = expressionTexts[2].toBigDecimal()
+        val op = expressionTexts[1]
+
+        return when (op) {
+            "+" -> (exp1 + exp2).toString()
+            "-" -> (exp1 - exp2).toString()
+            "*" -> (exp1 * exp2).toString()
+            "/" -> (exp1 / exp2).toString()
+            "%" -> (exp1 % exp2).toString()
+            else -> ""
+        }
     }
 
     fun historyButtonClicked(v: View) {
@@ -110,6 +155,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun clearButtonClicked(v: View) {
+        expressionTextView.text = ""
+        resultTextView.text = ""
+        isOperator = false
+        hasOperator = false
+    }
+}
 
+private fun String.isNumber(): Boolean {
+    return try {
+        this.toBigInteger()
+        true
+    } catch (e: NumberFormatException) {
+        false
     }
 }
