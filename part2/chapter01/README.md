@@ -12,5 +12,3 @@
 
 <img src="https://user-images.githubusercontent.com/43491968/152455021-2af0716e-da74-49c7-9e87-ee9b3c41431e.png" height="500">
 <img src="https://user-images.githubusercontent.com/43491968/152455045-64b20bd1-50f9-4fc3-8cfd-e7cc868ab1d9.png" height="500">
-
-
