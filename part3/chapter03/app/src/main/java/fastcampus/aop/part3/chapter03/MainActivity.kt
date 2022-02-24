@@ -1,14 +1,15 @@
 package fastcampus.aop.part3.chapter03
 
+import android.app.AlarmManager
 import android.app.PendingIntent
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
-import android.widget.TimePicker
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -34,11 +35,47 @@ class MainActivity : AppCompatActivity() {
 
     private fun initOnOffButton() {
         onOffButton.setOnClickListener {
-            // 데이터를 확인을 한다
-            // 온오프에 따라 작업을 처리한다
-            // 오프 -> 알람을 제거
-            // 온 -> 알람을 등록
-            // 데이터 저장
+            val model = it.tag as? AlarmDisplayModel ?: return@setOnClickListener
+            val newModel = saveAlarmModel(model.hour, model.minute, model.onOff.not())
+            renderView(newModel)
+
+            if (newModel.onOff) {
+                val calendar = Calendar.getInstance().apply {
+                    set(Calendar.HOUR_OF_DAY, newModel.hour)
+                    set(Calendar.MINUTE, newModel.minute)
+
+                    if (before(Calendar.getInstance())) {
+                        add(Calendar.DATE, 1)
+                    }
+                }
+
+                val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                val intent = Intent(this, AlarmReceiver::class.java)
+                val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    PendingIntent.getBroadcast(
+                        this,
+                        ALARM_REQUEST_CODE,
+                        intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+                    )
+                } else {
+                    PendingIntent.getBroadcast(
+                        this,
+                        ALARM_REQUEST_CODE,
+                        intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                    )
+                }
+
+                alarmManager.setInexactRepeating(
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.timeInMillis,
+                    AlarmManager.INTERVAL_DAY,
+                    pendingIntent
+                )
+            } else {
+                cancelAlarm()
+            }
         }
     }
 
@@ -48,8 +85,7 @@ class MainActivity : AppCompatActivity() {
             TimePickerDialog(this, { picker, hour, minute ->
                 val model = saveAlarmModel(hour, minute)
                 renderView(model)
-
-                // 기존 알람 삭제
+                cancelAlarm()
             }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false)
                 .show()
         }
@@ -79,21 +115,30 @@ class MainActivity : AppCompatActivity() {
             onOff = onOffDBValue
         )
 
-//        val pendingIntent = PendingIntent.getBroadcast(
-//            this,
-//            ALARM_REQUEST_CODE,
-//            Intent(this, AlarmReceiver::class.java),
-//            PendingIntent.FLAG_NO_CREATE
-//        )
-//
-//        // 보정 (예외 처리)
-//        if ((pendingIntent == null) and alarmModel.onOff) {
-//            // 알람은 꺼져있는데, 저장된 데이터는 on인 경우
-//            alarmModel.onOff = false
-//        } else if ((pendingIntent != null) and !alarmModel.onOff) {
-//            // 알람은 켜져있는데, 저장된 데이터는 off인 경우 : 알람 취소
-//            pendingIntent.cancel()
-//        }
+        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.getBroadcast(
+                this,
+                ALARM_REQUEST_CODE,
+                Intent(this, AlarmReceiver::class.java),
+                PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_MUTABLE
+            )
+        } else {
+            PendingIntent.getBroadcast(
+                this,
+                ALARM_REQUEST_CODE,
+                Intent(this, AlarmReceiver::class.java),
+                PendingIntent.FLAG_NO_CREATE
+            )
+        }
+
+        // 보정 (예외 처리)
+        if ((pendingIntent == null) and alarmModel.onOff) {
+            // 알람은 꺼져있는데, 저장된 데이터는 on인 경우
+            alarmModel.onOff = false
+        } else if ((pendingIntent != null) and !alarmModel.onOff) {
+            // 알람은 켜져있는데, 저장된 데이터는 off인 경우 : 알람 취소
+            pendingIntent.cancel()
+        }
 
         return alarmModel
     }
@@ -110,6 +155,25 @@ class MainActivity : AppCompatActivity() {
             text = model.onOffText
             tag = model
         }
+    }
+
+    private fun cancelAlarm() {
+        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.getBroadcast(
+                this,
+                ALARM_REQUEST_CODE,
+                Intent(this, AlarmReceiver::class.java),
+                PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_MUTABLE
+            )
+        } else {
+            PendingIntent.getBroadcast(
+                this,
+                ALARM_REQUEST_CODE,
+                Intent(this, AlarmReceiver::class.java),
+                PendingIntent.FLAG_NO_CREATE
+            )
+        }
+        pendingIntent?.cancel()
     }
 
     companion object {
