@@ -2,4 +2,6 @@
     <string name="app_name">aop-part3-chapter05</string>
     <string name="login">로그인</string>
     <string name="sing_up">회원가입</string>
+    <string name="facebook_app_id">740457893582730</string>
+    <string name="fb_login_protocol_scheme">fb740457893582730</string>
 </resources>
