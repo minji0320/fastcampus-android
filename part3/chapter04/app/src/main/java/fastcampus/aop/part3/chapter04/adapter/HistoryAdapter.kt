@@ -8,7 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import fastcampus.aop.part3.chapter04.databinding.ItemHistoryBinding
 import fastcampus.aop.part3.chapter04.model.History
 
-class HistoryAdapter(val historyDeleteClickedListener: (String) -> Unit) : ListAdapter<History, HistoryAdapter.HistoryItemViewHolder>(diffUtil) {
+class HistoryAdapter(
+    private val historyDeleteClickedListener: (String) -> Unit,
+    private val itemClickedListener: (String) -> Unit,
+) : ListAdapter<History, HistoryAdapter.HistoryItemViewHolder>(diffUtil) {
 
     inner class HistoryItemViewHolder(private val binding: ItemHistoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -18,6 +21,10 @@ class HistoryAdapter(val historyDeleteClickedListener: (String) -> Unit) : ListA
 
             binding.historyKeywordDeleteButton.setOnClickListener {
                 historyDeleteClickedListener(historyModel.keyword.orEmpty())
+            }
+
+            binding.historyKeywordTextView.setOnClickListener {
+                itemClickedListener(historyModel.keyword.orEmpty())
             }
         }
     }

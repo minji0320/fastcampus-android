@@ -107,9 +107,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initHistoryRecyclerView() {
-        historyAdapter = HistoryAdapter(historyDeleteClickedListener = {
-            deleteSearchKeyword(it)
-        })
+        historyAdapter = HistoryAdapter(
+            historyDeleteClickedListener = {
+                deleteSearchKeyword(it)
+            },
+            itemClickedListener = {
+                hideHistoryView()
+                search(it)
+            }
+        )
 
         binding.historyRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.historyRecyclerView.adapter = historyAdapter
@@ -139,10 +145,9 @@ class MainActivity : AppCompatActivity() {
     private fun showHistoryView() {
         Thread {
             val keywords = db.historyDao().getAll().reversed()
-
             runOnUiThread {
-                binding.historyRecyclerView.isVisible = true
-                historyAdapter.submitList(keywords.orEmpty())
+                historyAdapter.submitList(keywords)
+                binding.historyRecyclerView.isVisible = keywords.isNotEmpty()
             }
         }.start()
     }
