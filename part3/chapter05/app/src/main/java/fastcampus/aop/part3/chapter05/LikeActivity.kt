@@ -1,6 +1,7 @@
 package fastcampus.aop.part3.chapter05
 
 import android.os.Bundle
+import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -12,13 +13,18 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.yuyakaido.android.cardstackview.CardStackLayoutManager
+import com.yuyakaido.android.cardstackview.CardStackListener
+import com.yuyakaido.android.cardstackview.Direction
 import fastcampus.aop.part3.chapter05.databinding.ActivityLikeBinding
 
-class LikeActivity : AppCompatActivity() {
+class LikeActivity : AppCompatActivity(), CardStackListener {
 
     private lateinit var binding: ActivityLikeBinding
     private var auth = FirebaseAuth.getInstance()
     private lateinit var userDB: DatabaseReference
+    private val adapter = CardItemAdapter()
+    private val cardItems = mutableListOf<CardItem>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +48,13 @@ class LikeActivity : AppCompatActivity() {
 
             }
         })
+
+        initCardStackView()
+    }
+
+    private fun initCardStackView() {
+        binding.cardStackView.layoutManager = CardStackLayoutManager(this, this)
+        binding.cardStackView.adapter = adapter
     }
 
     private fun showNameInputPopup() {
@@ -77,4 +90,18 @@ class LikeActivity : AppCompatActivity() {
 
         return auth.currentUser?.uid.orEmpty()
     }
+
+    override fun onCardDragging(direction: Direction?, ratio: Float) {}
+
+    override fun onCardSwiped(direction: Direction?) {
+
+    }
+
+    override fun onCardRewound() {}
+
+    override fun onCardCanceled() {}
+
+    override fun onCardAppeared(view: View?, position: Int) {}
+
+    override fun onCardDisappeared(view: View?, position: Int) {}
 }
