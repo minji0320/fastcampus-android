@@ -6,4 +6,8 @@
     <string name="fb_login_protocol_scheme">fb740457893582730</string>
     <string name="log_out">로그아웃</string>
     <string name="show_match_list">매치 리스트 보기</string>
+    <string name="write_name">이름을 입력해주세요</string>
+    <string name="save">저장</string>
+    <string name="like">LIKE</string>
+    <string name="dislike">DISLIKE</string>
 </resources>

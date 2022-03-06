@@ -8,6 +8,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import fastcampus.aop.part3.chapter05.DBKey.Companion.LIKED_BY
+import fastcampus.aop.part3.chapter05.DBKey.Companion.MATCH
+import fastcampus.aop.part3.chapter05.DBKey.Companion.NAME
+import fastcampus.aop.part3.chapter05.DBKey.Companion.USERS
 import fastcampus.aop.part3.chapter05.databinding.ActivityMatchBinding
 
 class MatchedUserActivity : AppCompatActivity() {
@@ -24,7 +28,7 @@ class MatchedUserActivity : AppCompatActivity() {
         binding = ActivityMatchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        userDB = Firebase.database.reference.child("Users")
+        userDB = Firebase.database.reference.child(USERS)
 
         initMatchedUserRecyclerView()
         getMatchUsers()
@@ -37,8 +41,8 @@ class MatchedUserActivity : AppCompatActivity() {
 
     private fun getMatchUsers() {
         val matchedDB = userDB.child(getCurrentUserId())
-            .child("likedBy")
-            .child("match")
+            .child(LIKED_BY)
+            .child(MATCH)
 
         matchedDB.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
@@ -61,7 +65,7 @@ class MatchedUserActivity : AppCompatActivity() {
     private fun getUserByKey(userId: String) {
         userDB.child(userId).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                cardItems.add(CardItem(userId, snapshot.child("name").value.toString()))
+                cardItems.add(CardItem(userId, snapshot.child(NAME).value.toString()))
                 adapter.submitList(cardItems)
             }
 
