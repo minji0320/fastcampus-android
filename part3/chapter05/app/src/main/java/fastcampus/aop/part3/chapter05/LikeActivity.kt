@@ -1,6 +1,7 @@
 package fastcampus.aop.part3.chapter05
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
@@ -51,6 +52,8 @@ class LikeActivity : AppCompatActivity(), CardStackListener {
         })
 
         initCardStackView()
+        initLogOutButton()
+        initMatchListButton()
     }
 
     private fun getUnselectedUsers() {
@@ -97,6 +100,20 @@ class LikeActivity : AppCompatActivity(), CardStackListener {
         binding.cardStackView.adapter = adapter
     }
 
+    private fun initLogOutButton() {
+        binding.logOutButton.setOnClickListener {
+            auth.signOut()
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+        }
+    }
+
+    private fun initMatchListButton() {
+        binding.matchListButton.setOnClickListener {
+            startActivity(Intent(this, MatchedUserActivity::class.java))
+        }
+    }
+
     private fun showNameInputPopup() {
         val editText = EditText(this)
         AlertDialog.Builder(this)
@@ -137,12 +154,13 @@ class LikeActivity : AppCompatActivity(), CardStackListener {
         val card = cardItems[manager.topPosition - 1]
         cardItems.removeFirst()
         userDB.child(card.userId)
-            .child("likeBy")
+            .child("likedBy")
             .child("like")
             .child(getCurrentUserId())
             .setValue(true)
 
-        // TODO 매칭이 된 시점을 봐야함
+        saveMatchIfOtherUserLikedMe(card.userId)
+
         Toast.makeText(this, "${card.name}님을 Like 하셨습니다.", Toast.LENGTH_SHORT).show()
     }
 
@@ -151,13 +169,39 @@ class LikeActivity : AppCompatActivity(), CardStackListener {
         val card = cardItems[manager.topPosition - 1]
         cardItems.removeFirst()
         userDB.child(card.userId)
-            .child("likeBy")
+            .child("likedBy")
             .child("dislike")
             .child(getCurrentUserId())
             .setValue(true)
 
-
         Toast.makeText(this, "${card.name}님을 Dislike 하셨습니다.", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun saveMatchIfOtherUserLikedMe(otherUserId: String) {
+        val otherUserDB = userDB.child(getCurrentUserId())
+            .child("likedBy")
+            .child("like")
+            .child(otherUserId)
+        otherUserDB.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.value == true) {
+                    userDB.child(getCurrentUserId())
+                        .child("likedBy")
+                        .child("match")
+                        .child(otherUserId)
+                        .setValue(true)
+
+                    userDB.child(otherUserId)
+                        .child("likedBy")
+                        .child("match")
+                        .child(getCurrentUserId())
+                        .setValue(true)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+
+        })
     }
 
     override fun onCardDragging(direction: Direction?, ratio: Float) {}
