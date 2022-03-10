@@ -1,5 +1,6 @@
 package fastcampus.aop.part3.chapter06.chatlist
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -8,13 +9,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import fastcampus.aop.part3.chapter06.DBKey.Companion.CHILD_CHAT
 import fastcampus.aop.part3.chapter06.DBKey.Companion.DB_USERS
 import fastcampus.aop.part3.chapter06.R
+import fastcampus.aop.part3.chapter06.chatdetail.ChatRoomActivity
 import fastcampus.aop.part3.chapter06.databinding.FragmentChatListBinding
 
 class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
@@ -32,9 +33,15 @@ class ChatListFragment : Fragment(R.layout.fragment_chat_list) {
 
         val fragmentChatListBinding = FragmentChatListBinding.bind(view)
         binding = fragmentChatListBinding
-        chatListAdapter = ChatListAdapter(onItemClicked = {
-            // 채팅방으로 이동
+        chatListAdapter = ChatListAdapter(onItemClicked = { chatRoom ->
+            context?.let {
+                val intent = Intent(it, ChatRoomActivity::class.java)
+                intent.putExtra("chatKey", chatRoom.key)
+                startActivity(intent)
+            }
         })
+
+        chatRoomList.clear()
 
         fragmentChatListBinding.chatListRecyclerView.adapter = chatListAdapter
         fragmentChatListBinding.chatListRecyclerView.layoutManager = LinearLayoutManager(context)
