@@ -1,4 +1,4 @@
-# Part3 - Chapter04 도서 리뷰 앱
+# Part3 - Chapter05 틴더
 
 ## 학습 내용
 - Firebase Authenetication
