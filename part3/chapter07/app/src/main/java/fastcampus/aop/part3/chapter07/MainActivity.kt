@@ -10,13 +10,14 @@ import androidx.viewpager2.widget.ViewPager2
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.overlay.Overlay
 import com.naver.maps.map.util.FusedLocationSource
 import com.naver.maps.map.util.MarkerIcons
 import com.naver.maps.map.widget.LocationButtonView
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 
-class MainActivity : AppCompatActivity(), OnMapReadyCallback {
+class MainActivity : AppCompatActivity(), OnMapReadyCallback, Overlay.OnClickListener {
 
     private lateinit var naverMap: NaverMap
     private lateinit var locationSource: FusedLocationSource
@@ -49,6 +50,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         viewPager.adapter = viewPagerAdapter
         recyclerView.adapter = recyclerAdapter
         recyclerView.layoutManager = LinearLayoutManager(this)
+
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+
+                val selectedHouseModel = viewPagerAdapter.currentList[position]
+                val cameraUpdate =
+                    CameraUpdate.scrollTo(LatLng(selectedHouseModel.lat, selectedHouseModel.lng))
+                        .animate(CameraAnimation.Easing)
+
+                naverMap.moveCamera(cameraUpdate)
+            }
+        })
     }
 
     override fun onMapReady(map: NaverMap) {
@@ -107,11 +121,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             naverMap.apply {
                 val marker = Marker()
                 marker.position = LatLng(house.lat, house.lng)
-                // Todo marker.onClickListener
                 marker.map = naverMap
                 marker.tag = house.id
                 marker.icon = MarkerIcons.BLACK
                 marker.iconTintColor = Color.RED
+                marker.onClickListener = this@MainActivity
             }
         }
     }
@@ -167,6 +181,18 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onLowMemory() {
         super.onLowMemory()
         mapView.onLowMemory()
+    }
+
+    override fun onClick(overlay: Overlay): Boolean {
+        val selectedModel = viewPagerAdapter.currentList.firstOrNull() {
+            it.id == overlay.tag
+        }
+
+        selectedModel?.let {
+            val position = viewPagerAdapter.currentList.indexOf(it)
+            viewPager.currentItem = position
+        }
+        return true
     }
 
     companion object {
