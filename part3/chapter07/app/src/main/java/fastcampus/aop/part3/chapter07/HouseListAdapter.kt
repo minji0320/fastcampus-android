@@ -1,5 +1,7 @@
 package fastcampus.aop.part3.chapter07
 
+import android.content.Context
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,9 +11,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 
-class HouseViewPagerAdapter :
-    ListAdapter<HouseModel, HouseViewPagerAdapter.ItemViewHolder>(diffUtil) {
+class HouseListAdapter :
+    ListAdapter<HouseModel, HouseListAdapter.ItemViewHolder>(diffUtil) {
 
     inner class ItemViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         fun bind(houseModel: HouseModel) {
@@ -24,6 +28,7 @@ class HouseViewPagerAdapter :
 
             Glide.with(thumbnailImageView.context)
                 .load(houseModel.imgUrl)
+                .transform(CenterCrop(), RoundedCorners(dpToPx(thumbnailImageView.context, 12)))
                 .into(thumbnailImageView)
         }
     }
@@ -31,17 +36,20 @@ class HouseViewPagerAdapter :
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
-    ): HouseViewPagerAdapter.ItemViewHolder {
+    ): HouseListAdapter.ItemViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return ItemViewHolder(inflater.inflate(
-            R.layout.item_house_detail_for_viewpager,
-            parent,
-            false
-        ))
+        return ItemViewHolder(inflater.inflate(R.layout.item_house, parent, false))
     }
 
-    override fun onBindViewHolder(holder: HouseViewPagerAdapter.ItemViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: HouseListAdapter.ItemViewHolder, position: Int) {
         holder.bind(currentList[position])
+    }
+
+    private fun dpToPx(context: Context, dp: Int): Int {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+            dp.toFloat(),
+            context.resources.displayMetrics
+        ).toInt()
     }
 
     companion object {
