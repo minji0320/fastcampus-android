@@ -3,11 +3,14 @@ package fastcampus.aop.part3.chapter07
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
 import com.naver.maps.map.util.MarkerIcons
+import retrofit2.*
+import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -45,12 +48,48 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         locationSource = FusedLocationSource(this@MainActivity, LOCATION_PERMISSION_REQUEST_CODE)
         naverMap.locationSource = locationSource
 
-        // 마커 추가
-        val marker = Marker()
-        marker.position = LatLng(37.502264, 127.029635)
-        marker.map = naverMap
-        marker.icon = MarkerIcons.BLACK
-        marker.iconTintColor = Color.RED
+        getHouseListFromAPI()
+    }
+
+    private fun getHouseListFromAPI() {
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://run.mocky.io")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        retrofit.create(HouseService::class.java).also {
+            it.getHouseList()
+                .enqueue(object : Callback<HouseDto> {
+                    override fun onResponse(call: Call<HouseDto>, response: Response<HouseDto>) {
+                        if (response.isSuccessful.not()) {
+                            // 실패 처리
+                            return
+                        }
+
+                        response.body()?.let { dto ->
+                            updateMarker(dto.items)
+                        }
+                    }
+
+                    override fun onFailure(call: Call<HouseDto>, t: Throwable) {
+
+                    }
+                })
+        }
+    }
+
+    private fun updateMarker(houses: List<HouseModel>) {
+        houses.forEach { house ->
+            naverMap.apply {
+                val marker = Marker()
+                marker.position = LatLng(house.lat, house.lng)
+                // Todo marker.onClickListener
+                marker.map = naverMap
+                marker.tag = house.id
+                marker.icon = MarkerIcons.BLACK
+                marker.iconTintColor = Color.RED
+            }
+        }
     }
 
     override fun onRequestPermissionsResult(
