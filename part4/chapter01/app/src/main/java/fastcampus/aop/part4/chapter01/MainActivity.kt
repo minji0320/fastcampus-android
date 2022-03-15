@@ -3,6 +3,8 @@ package fastcampus.aop.part4.chapter01
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.recyclerview.widget.LinearLayoutManager
+import fastcampus.aop.part4.chapter01.adapter.VideoAdapter
 import fastcampus.aop.part4.chapter01.databinding.ActivityMainBinding
 import fastcampus.aop.part4.chapter01.dto.VideoDto
 import fastcampus.aop.part4.chapter01.service.VideoService
@@ -15,6 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var videoAdapter: VideoAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,6 +27,10 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, PlayerFragment())
             .commit()
+
+        videoAdapter = VideoAdapter()
+        binding.mainRecyclerView.adapter = videoAdapter
+        binding.mainRecyclerView.layoutManager = LinearLayoutManager(this)
 
         getVideoList()
     }
@@ -43,8 +50,8 @@ class MainActivity : AppCompatActivity() {
                             return
                         }
 
-                        response.body()?.let {
-                            Log.d("MainActivity", it.toString())
+                        response.body()?.let { videoDto ->
+                            videoAdapter.submitList(videoDto.videos)
                         }
                     }
 
