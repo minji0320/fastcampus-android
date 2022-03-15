@@ -28,13 +28,17 @@ class MainActivity : AppCompatActivity() {
             .replace(R.id.fragmentContainer, PlayerFragment())
             .commit()
 
-        videoAdapter = VideoAdapter()
+        videoAdapter = VideoAdapter(callback = { url, title ->
+            supportFragmentManager.fragments.find { it is PlayerFragment }?.let {
+                (it as PlayerFragment).play(url, title)
+            }
+        })
         binding.mainRecyclerView.adapter = videoAdapter
         binding.mainRecyclerView.layoutManager = LinearLayoutManager(this)
 
         getVideoList()
     }
-    
+
     private fun getVideoList() {
         val retrofit = Retrofit.Builder()
             .baseUrl("https://run.mocky.io/")

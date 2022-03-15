@@ -12,9 +12,10 @@ import com.bumptech.glide.Glide
 import fastcampus.aop.part4.chapter01.R
 import fastcampus.aop.part4.chapter01.model.VideoModel
 
-class VideoAdapter: ListAdapter<VideoModel, VideoAdapter.ViewHolder>(diffUtil) {
+class VideoAdapter(val callback: (String, String) -> Unit) :
+    ListAdapter<VideoModel, VideoAdapter.ViewHolder>(diffUtil) {
 
-    inner class ViewHolder(private val view: View): RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         fun bind(item: VideoModel) {
             val titleTextView = view.findViewById<TextView>(R.id.titleTextView)
             val subTitleTextView = view.findViewById<TextView>(R.id.subTitleTextView)
@@ -26,11 +27,15 @@ class VideoAdapter: ListAdapter<VideoModel, VideoAdapter.ViewHolder>(diffUtil) {
                 .load(item.thumb)
                 .into(thumbnailImageView)
 
+            view.setOnClickListener {
+                callback(item.sources, item.title)
+            }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_video, parent, false))
+        return ViewHolder(LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_video, parent, false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -38,7 +43,7 @@ class VideoAdapter: ListAdapter<VideoModel, VideoAdapter.ViewHolder>(diffUtil) {
     }
 
     companion object {
-        val diffUtil = object: DiffUtil.ItemCallback<VideoModel>() {
+        val diffUtil = object : DiffUtil.ItemCallback<VideoModel>() {
             override fun areItemsTheSame(oldItem: VideoModel, newItem: VideoModel): Boolean {
                 // id 값이 없는 관계로..
                 return oldItem == newItem
