@@ -3,6 +3,8 @@ package fastcampus.aop.part4.chapter01
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import fastcampus.aop.part4.chapter01.adapter.VideoAdapter
 import fastcampus.aop.part4.chapter01.databinding.ActivityMainBinding

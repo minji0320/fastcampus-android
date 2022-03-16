@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.exoplayer2.MediaItem
@@ -166,6 +167,9 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
             player?.play()
         }
         binding?.let {
+            if (!it.playerMotionLayout.isVisible) {
+                it.playerMotionLayout.visibility = View.VISIBLE
+            }
             it.playerMotionLayout.transitionToEnd()
             it.bottomTitleTextView.text = title
         }
