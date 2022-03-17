@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">aop-part4-chapter02</string>
+    <string name="play_list">재생목록</string>
 </resources>
