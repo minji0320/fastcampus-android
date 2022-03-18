@@ -5,6 +5,10 @@ import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.SimpleExoPlayer
 import fastcampus.aop.part4.chapter02.databinding.FragmentPlayerBinding
 import fastcampus.aop.part4.chapter02.service.MusicDto
 import fastcampus.aop.part4.chapter02.service.MusicService
@@ -18,6 +22,8 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
 
     private var binding: FragmentPlayerBinding? = null
     private var isWatchingPlayListView = true
+    private lateinit var playListAdapter: PlayListAdapter
+    private var player: SimpleExoPlayer? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -25,9 +31,33 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
         val fragmentPlayerBinding = FragmentPlayerBinding.bind(view)
         binding = fragmentPlayerBinding
 
+        initPlayView(fragmentPlayerBinding)
         initPlayListButton(fragmentPlayerBinding)
+        initPlayControlButton(fragmentPlayerBinding)
+        initRecyclerView(fragmentPlayerBinding)
 
         getVideoListFromServer()
+    }
+
+    private fun initPlayView(fragmentPlayerBinding: FragmentPlayerBinding) {
+        context?.let {
+            player = SimpleExoPlayer.Builder(it).build()
+        }
+
+        fragmentPlayerBinding.playerView.player = player
+
+        binding?.let { binding ->
+            player?.addListener(object : Player.EventListener {
+                override fun onIsPlayingChanged(isPlaying: Boolean) {
+                    super.onIsPlayingChanged(isPlaying)
+                    if (isPlaying) {
+                        binding.playControlImageView.setImageResource(R.drawable.ic_pause)
+                    } else {
+                        binding.playControlImageView.setImageResource(R.drawable.ic_play_arrow)
+                    }
+                }
+            })
+        }
     }
 
     private fun initPlayListButton(fragmentPlayerBinding: FragmentPlayerBinding) {
@@ -37,6 +67,36 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
             fragmentPlayerBinding.playListViewGroup.isVisible = !isWatchingPlayListView
 
             isWatchingPlayListView = !isWatchingPlayListView
+        }
+    }
+
+    private fun initPlayControlButton(fragmentPlayerBinding: FragmentPlayerBinding) {
+        fragmentPlayerBinding.playControlImageView.setOnClickListener {
+            val player = this.player ?: return@setOnClickListener
+
+            if (player.isPlaying) {
+                player.pause()
+            } else {
+                player.play()
+            }
+        }
+
+        fragmentPlayerBinding.skipNextImageView.setOnClickListener {
+
+        }
+
+        fragmentPlayerBinding.skipPrevImageView.setOnClickListener {
+
+        }
+    }
+
+    private fun initRecyclerView(fragmentPlayerBinding: FragmentPlayerBinding) {
+        playListAdapter = PlayListAdapter {
+            // Todo 음악 재생
+        }
+        fragmentPlayerBinding.playListRecyclerView.apply {
+            adapter = playListAdapter
+            layoutManager = LinearLayoutManager(context)
         }
     }
 
@@ -57,7 +117,8 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
                                 musicEntity.mapper(index.toLong())
                             }
 
-
+                            setMusicList(modelList)
+                            playListAdapter.submitList(modelList)
                         }
                     }
 
@@ -66,6 +127,22 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
                     }
 
                 })
+        }
+    }
+
+    private fun setMusicList(modelList: List<MusicModel>) {
+        context?.let {
+            player?.addMediaItems(modelList.map { musicModel ->
+                MediaItem.Builder()
+                    .setMediaId(musicModel.id.toString())
+                    .setUri(musicModel.streamUrl)
+                    .build()
+            })
+
+            player?.prepare()
+
+            // 테스트를 위해 추가한 코드
+            player?.play()
         }
     }
 
