@@ -3,7 +3,9 @@ package fastcampus.aop.part4.chapter02
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import fastcampus.aop.part4.chapter02.databinding.FragmentPlayerBinding
 import fastcampus.aop.part4.chapter02.service.MusicDto
 import fastcampus.aop.part4.chapter02.service.MusicService
 import retrofit2.Call
@@ -13,10 +15,29 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class PlayerFragment : Fragment(R.layout.fragment_player) {
+
+    private var binding: FragmentPlayerBinding? = null
+    private var isWatchingPlayListView = true
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val fragmentPlayerBinding = FragmentPlayerBinding.bind(view)
+        binding = fragmentPlayerBinding
+
+        initPlayListButton(fragmentPlayerBinding)
+
         getVideoListFromServer()
+    }
+
+    private fun initPlayListButton(fragmentPlayerBinding: FragmentPlayerBinding) {
+        fragmentPlayerBinding.playlistImageView.setOnClickListener {
+            // Todo 서버에서 데이터가 다 불려오지 않을 상태일 때 예외처리 필요
+            fragmentPlayerBinding.playerViewGroup.isVisible = isWatchingPlayListView
+            fragmentPlayerBinding.playListViewGroup.isVisible = !isWatchingPlayListView
+
+            isWatchingPlayListView = !isWatchingPlayListView
+        }
     }
 
     private fun getVideoListFromServer() {
@@ -30,6 +51,14 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
                 .enqueue(object : Callback<MusicDto> {
                     override fun onResponse(call: Call<MusicDto>, response: Response<MusicDto>) {
                         Log.d("PlayerFragment", "${response.body()}")
+
+                        response.body()?.let { dto ->
+                            val modelList = dto.musics.mapIndexed { index, musicEntity ->
+                                musicEntity.mapper(index.toLong())
+                            }
+
+
+                        }
                     }
 
                     override fun onFailure(call: Call<MusicDto>, t: Throwable) {
