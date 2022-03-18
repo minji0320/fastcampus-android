@@ -20,8 +20,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class PlayerFragment : Fragment(R.layout.fragment_player) {
 
+    private var model: PlayerModel = PlayerModel()
     private var binding: FragmentPlayerBinding? = null
-    private var isWatchingPlayListView = true
     private lateinit var playListAdapter: PlayListAdapter
     private var player: SimpleExoPlayer? = null
 
@@ -56,17 +56,25 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
                         binding.playControlImageView.setImageResource(R.drawable.ic_play_arrow)
                     }
                 }
+
+                override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+                    super.onMediaItemTransition(mediaItem, reason)
+
+                    val newIndex = mediaItem?.mediaId ?: return
+                    model.currentPosition = newIndex.toInt()
+                    playListAdapter.submitList(model.getAdapterModels())
+                }
             })
         }
     }
 
     private fun initPlayListButton(fragmentPlayerBinding: FragmentPlayerBinding) {
         fragmentPlayerBinding.playlistImageView.setOnClickListener {
-            // Todo 서버에서 데이터가 다 불려오지 않을 상태일 때 예외처리 필요
-            fragmentPlayerBinding.playerViewGroup.isVisible = isWatchingPlayListView
-            fragmentPlayerBinding.playListViewGroup.isVisible = !isWatchingPlayListView
+            if (model.currentPosition == -1) return@setOnClickListener
+            fragmentPlayerBinding.playerViewGroup.isVisible = model.isWatchingPlayListView
+            fragmentPlayerBinding.playListViewGroup.isVisible = !model.isWatchingPlayListView
 
-            isWatchingPlayListView = !isWatchingPlayListView
+            model.isWatchingPlayListView = !model.isWatchingPlayListView
         }
     }
 
@@ -82,18 +90,21 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
         }
 
         fragmentPlayerBinding.skipNextImageView.setOnClickListener {
-
+            val nextMusic = model.getNextMusic() ?: return@setOnClickListener
+            playMusic(nextMusic)
         }
 
         fragmentPlayerBinding.skipPrevImageView.setOnClickListener {
-
+            val prevMusic = model.getPrevMusic() ?: return@setOnClickListener
+            playMusic(prevMusic)
         }
     }
 
     private fun initRecyclerView(fragmentPlayerBinding: FragmentPlayerBinding) {
         playListAdapter = PlayListAdapter {
-            // Todo 음악 재생
+            playMusic(it)
         }
+
         fragmentPlayerBinding.playListRecyclerView.apply {
             adapter = playListAdapter
             layoutManager = LinearLayoutManager(context)
@@ -112,13 +123,10 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
                     override fun onResponse(call: Call<MusicDto>, response: Response<MusicDto>) {
                         Log.d("PlayerFragment", "${response.body()}")
 
-                        response.body()?.let { dto ->
-                            val modelList = dto.musics.mapIndexed { index, musicEntity ->
-                                musicEntity.mapper(index.toLong())
-                            }
-
-                            setMusicList(modelList)
-                            playListAdapter.submitList(modelList)
+                        response.body()?.let { musicDto ->
+                            model = musicDto.mapper()
+                            setMusicList(model.getAdapterModels())
+                            playListAdapter.submitList(model.getAdapterModels())
                         }
                     }
 
@@ -140,10 +148,15 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
             })
 
             player?.prepare()
-
-            // 테스트를 위해 추가한 코드
-            player?.play()
         }
+    }
+
+    private fun playMusic(musicModel: MusicModel) {
+        // player의 mediaId와 model의 id가 같은 경우 play
+        // seekTo : 원하는 재생 목록 위치로 이동
+        model.updateCurrentPosition(musicModel)
+        player?.seekTo(model.currentPosition, 0)
+        player?.play()
     }
 
     companion object {
