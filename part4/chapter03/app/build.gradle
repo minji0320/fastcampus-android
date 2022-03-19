@@ -7,7 +7,7 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "fastcampus.aop.part4chapter03"
+        applicationId "fastcampus.aop.part4.chapter03"
         minSdk 23
         targetSdk 31
         versionCode 1
@@ -28,6 +28,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+    viewBinding {
+        enabled = true
     }
 }
 
