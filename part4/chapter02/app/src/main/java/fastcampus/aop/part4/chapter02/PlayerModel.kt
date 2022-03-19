@@ -18,7 +18,7 @@ data class PlayerModel(
     }
 
     fun updateCurrentPosition(musicModel: MusicModel) {
-        currentPosition = playMusicList.indexOf(musicModel)
+        currentPosition = musicModel.id.toInt()
     }
 
     fun getNextMusic(): MusicModel? {
