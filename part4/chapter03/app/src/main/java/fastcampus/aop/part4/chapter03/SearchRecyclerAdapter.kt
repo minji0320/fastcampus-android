@@ -1,21 +1,21 @@
 package fastcampus.aop.part4.chapter03
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import fastcampus.aop.part4.chapter03.databinding.ItemSearchResultBinding
+import fastcampus.aop.part4.chapter03.model.SearchResultEntity
 
-class SearchRecyclerAdapter(private val searchResultClickListener: (Any) -> Unit) :
+class SearchRecyclerAdapter(private val searchResultClickListener: (SearchResultEntity) -> Unit) :
     RecyclerView.Adapter<SearchRecyclerAdapter.ViewHolder>() {
 
-    private var searchResultList: List<Any> = listOf()
+    private var searchResultList: List<SearchResultEntity> = listOf()
 
     inner class ViewHolder(val binding: ItemSearchResultBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(data: Any) = with(binding) {
-            titleTextView.text = "제목"
-            subTitleTextView.text = "부제목"
+        fun bind(data: SearchResultEntity) = with(binding) {
+            titleTextView.text = data.name
+            subTitleTextView.text = data.fullAddress
 
             binding.root.setOnClickListener {
                 searchResultClickListener(data)
@@ -30,8 +30,12 @@ class SearchRecyclerAdapter(private val searchResultClickListener: (Any) -> Unit
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(Any())
+        holder.bind(searchResultList[position])
     }
 
-    override fun getItemCount(): Int = 10
+    override fun getItemCount(): Int = searchResultList.size
+
+    fun setSearchResultList(searchResultList: List<SearchResultEntity>) {
+        this.searchResultList = searchResultList
+    }
 }

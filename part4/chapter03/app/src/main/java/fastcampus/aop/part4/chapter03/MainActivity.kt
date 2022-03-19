@@ -1,11 +1,13 @@
 package fastcampus.aop.part4.chapter03
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.LinearLayoutManager
 import fastcampus.aop.part4.chapter03.databinding.ActivityMainBinding
+import fastcampus.aop.part4.chapter03.model.LocationLatLngEntity
+import fastcampus.aop.part4.chapter03.model.SearchResultEntity
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,7 +28,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initAdapter() {
         adapter = SearchRecyclerAdapter {
-            Toast.makeText(this, "아이템 클릭", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "빌딩 이름: ${it.name}, 주소: ${it.fullAddress}", Toast.LENGTH_SHORT).show()
         }
 
     }
@@ -36,11 +38,23 @@ class MainActivity : AppCompatActivity() {
         emptyResultTextView.isVisible = false
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun initData() {
         adapter.notifyDataSetChanged()
     }
 
     private fun setData() {
+        val dataList = (0..10).map {
+            SearchResultEntity(
+                name = "빌딩 $it",
+                fullAddress = "주소 $it",
+                locationLatLng = LocationLatLngEntity(
+                    it.toFloat(),
+                    it.toFloat()
+                )
+            )
+        }
 
+        adapter.setSearchResultList(dataList)
     }
 }
