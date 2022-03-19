@@ -9,6 +9,7 @@ import fastcampus.aop.part4.chapter03.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var adapter: SearchRecyclerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -16,12 +17,17 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        initAdapter()
         initViews()
     }
 
+    private fun initAdapter() {
+        adapter = SearchRecyclerAdapter()
+
+    }
+
     private fun initViews() = with(binding) {
-        recyclerView.adapter
-        recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
+        recyclerView.adapter = adapter
         emptyResultTextView.isVisible = false
     }
 }

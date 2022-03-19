@@ -27,6 +27,7 @@
         tools:text="부제목" />
 
     <View
+        android:id="@+id/divider"
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:background="@color/black"
