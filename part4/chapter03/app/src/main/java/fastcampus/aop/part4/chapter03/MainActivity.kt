@@ -1,10 +1,12 @@
 package fastcampus.aop.part4.chapter03
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.core.view.isVisible
+import fastcampus.aop.part4.chapter03.MapActivity.Companion.SEARCH_RESULT_EXTRA_KEY
 import fastcampus.aop.part4.chapter03.databinding.ActivityMainBinding
 import fastcampus.aop.part4.chapter03.model.LocationLatLngEntity
 import fastcampus.aop.part4.chapter03.model.SearchResultEntity
@@ -43,6 +45,12 @@ class MainActivity() : AppCompatActivity(), CoroutineScope {
                 "빌딩 이름: ${it.name}, 주소: ${it.fullAddress}, 위도/경도: ${it.locationLatLng}",
                 Toast.LENGTH_SHORT)
                 .show()
+
+            startActivity(
+                Intent(this, MapActivity::class.java).apply {
+                    putExtra(SEARCH_RESULT_EXTRA_KEY, it)
+                }
+            )
         }
 
     }
