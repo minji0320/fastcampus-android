@@ -37,5 +37,6 @@ class SearchRecyclerAdapter(private val searchResultClickListener: (SearchResult
 
     fun setSearchResultList(searchResultList: List<SearchResultEntity>) {
         this.searchResultList = searchResultList
+        notifyDataSetChanged()
     }
 }
