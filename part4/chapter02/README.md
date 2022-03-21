@@ -1,4 +1,4 @@
-# Part4 - Chapter01 유튜브
+# Part4 - Chapter02 음악 스트리밍 앱
 
 ## 학습 내용
 - ExoPlayer
