@@ -95,13 +95,13 @@ class MainActivity : AppCompatActivity() {
 
             if (scrolledValue > 150f.dpToPx(this@MainActivity).toInt()) {
                 if (isGatheringMotionAnimating.not()) {
-//                    binding.gatheringDigitalThingsBackgroundMotionLayout.transitionToEnd()
+                    binding.gatheringDigitalThingsBackgroundMotionLayout.transitionToEnd()
                     binding.gatheringDigitalThingsMotionLayout.transitionToEnd()
                     binding.buttonShownMotionLayout.transitionToEnd()
                 }
             } else {
                 if (isGatheringMotionAnimating.not()) {
-//                    binding.gatheringDigitalThingsBackgroundMotionLayout.transitionToStart()
+                    binding.gatheringDigitalThingsBackgroundMotionLayout.transitionToStart()
                     binding.gatheringDigitalThingsMotionLayout.transitionToStart()
                     binding.buttonShownMotionLayout.transitionToStart()
                 }
