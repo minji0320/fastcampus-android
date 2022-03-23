@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">aop-part4-chapter05</string>
+    <string name="github_login">Github Login</string>
+    <string name="loading">로딩 중...</string>
 </resources>
