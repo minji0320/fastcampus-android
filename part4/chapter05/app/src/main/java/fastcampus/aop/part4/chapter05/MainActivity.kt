@@ -1,5 +1,6 @@
 package fastcampus.aop.part4.chapter05
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -29,6 +30,8 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        initViews()
+
         launch {
             addMockData()
             val githubRepositories = loadGithubRepositories()
@@ -36,7 +39,12 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                 Log.e("repositories", githubRepositories.toString())
             }
         }
+    }
 
+    private fun initViews() = with(binding) {
+        searchButton.setOnClickListener {
+            startActivity(Intent(this@MainActivity, SearchActivity::class.java))
+        }
     }
 
     private suspend fun addMockData() = with(Dispatchers.IO) {
