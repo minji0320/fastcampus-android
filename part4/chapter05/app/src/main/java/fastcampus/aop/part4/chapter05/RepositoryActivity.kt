@@ -4,7 +4,9 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
+import fastcampus.aop.part4.chapter05.data.database.DataBaseProvider
 import fastcampus.aop.part4.chapter05.data.entity.GithubOwner
 import fastcampus.aop.part4.chapter05.data.entity.GithubRepoEntity
 import fastcampus.aop.part4.chapter05.databinding.ActivityRepositoryBinding
@@ -16,6 +18,12 @@ import kotlin.coroutines.CoroutineContext
 class RepositoryActivity : AppCompatActivity(), CoroutineScope {
 
     private lateinit var binding: ActivityRepositoryBinding
+
+    private val repositoryDao by lazy {
+        DataBaseProvider.provideDB(applicationContext).repositoryDao()
+    }
+
+    private var isLike: Boolean = false
 
     private val job = Job()
     override val coroutineContext: CoroutineContext
@@ -88,6 +96,44 @@ class RepositoryActivity : AppCompatActivity(), CoroutineScope {
         }
         descriptionTextView.text = githubRepoEntity.description
         updateTimeTextView.text = githubRepoEntity.updatedAt
+
+        setLikeState(githubRepoEntity)
+        binding.likeButton.setOnClickListener {
+            likeGithubRepo(githubRepoEntity)
+        }
+    }
+
+    private fun setLikeState(githubRepoEntity: GithubRepoEntity) = launch {
+        withContext(Dispatchers.IO) {
+            val repository = repositoryDao.getRepository(githubRepoEntity.fullName)
+            isLike = repository != null
+            withContext(Dispatchers.Main) {
+                setLikeImage()
+            }
+        }
+    }
+
+    private fun setLikeImage() {
+        binding.likeButton.setImageDrawable(ContextCompat.getDrawable(this,
+            if (isLike) {
+                R.drawable.ic_like
+            } else {
+                R.drawable.ic_dislike
+            }
+        ))
+    }
+
+    private fun likeGithubRepo(githubRepoEntity: GithubRepoEntity) = launch {
+        withContext(Dispatchers.IO) {
+            if (isLike) {
+                repositoryDao.remove(githubRepoEntity.fullName)
+            } else {
+                repositoryDao.insert(githubRepoEntity)
+            }
+            withContext(Dispatchers.Main) {
+                setLikeState(githubRepoEntity)
+            }
+        }
     }
 
     private fun showLoading(isShown: Boolean) = with(binding) {
