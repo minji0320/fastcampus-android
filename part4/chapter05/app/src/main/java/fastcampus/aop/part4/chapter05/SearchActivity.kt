@@ -1,11 +1,14 @@
 package fastcampus.aop.part4.chapter05
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Adapter
 import android.widget.Toast
 import androidx.core.view.isGone
+import fastcampus.aop.part4.chapter05.RepositoryActivity.Companion.REPOSITORY_NAME_KEY
+import fastcampus.aop.part4.chapter05.RepositoryActivity.Companion.REPOSITORY_OWNER_KEY
 import fastcampus.aop.part4.chapter05.data.entity.GithubRepoEntity
 import fastcampus.aop.part4.chapter05.databinding.ActivitySearchBinding
 import fastcampus.aop.part4.chapter05.utility.RetrofitUtil
@@ -65,6 +68,12 @@ class SearchActivity : AppCompatActivity(), CoroutineScope {
     private fun setData(items: List<GithubRepoEntity>) {
         adapter.setSearchResultList(items) {
             Toast.makeText(this, "entity : $it", Toast.LENGTH_SHORT).show()
+            startActivity(
+                Intent(this, RepositoryActivity::class.java).apply {
+                    putExtra(REPOSITORY_OWNER_KEY, it.owner.login)
+                    putExtra(REPOSITORY_NAME_KEY, it.name)
+                }
+            )
         }
     }
 
