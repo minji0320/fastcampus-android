@@ -1,6 +1,7 @@
 package fastcampus.aop.part4.chapter06.data
 
 import fastcampus.aop.part4.chapter06.BuildConfig
+import fastcampus.aop.part4.chapter06.data.models.airquality.MeasuredValues
 import fastcampus.aop.part4.chapter06.data.models.monitoringstation.MonitoringStations
 import fastcampus.aop.part4.chapter06.data.services.AirKoreaApiService
 import fastcampus.aop.part4.chapter06.data.services.KaKaoLocalApiService
@@ -41,6 +42,15 @@ object Repository {
             ?.monitoringStations
             ?.minByOrNull { it.tm ?: Double.MAX_VALUE }
     }
+
+    suspend fun getLatestAirQuality(stationName: String): MeasuredValues? =
+        airKoreaApiService
+            .getRealtimeAirQuality(stationName)
+            .body()
+            ?.response
+            ?.body
+            ?.measuredValues
+            ?.firstOrNull()
 
     private val kaKaoLocalApiService: KaKaoLocalApiService by lazy {
         Retrofit.Builder()
