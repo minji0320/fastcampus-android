@@ -1,8 +1,8 @@
 package fastcampus.aop.part4.chapter06.data
 
 import fastcampus.aop.part4.chapter06.BuildConfig
-import fastcampus.aop.part4.chapter06.data.models.airquality.MeasuredValues
-import fastcampus.aop.part4.chapter06.data.models.monitoringstation.MonitoringStations
+import fastcampus.aop.part4.chapter06.data.models.airquality.MeasuredValue
+import fastcampus.aop.part4.chapter06.data.models.monitoringstation.MonitoringStation
 import fastcampus.aop.part4.chapter06.data.services.AirKoreaApiService
 import fastcampus.aop.part4.chapter06.data.services.KaKaoLocalApiService
 import okhttp3.OkHttpClient
@@ -24,7 +24,7 @@ object Repository {
     suspend fun getNearbyMonitoringStation(
         latitude: Double,
         longitude: Double,
-    ): MonitoringStations? {
+    ): MonitoringStation? {
         val tmCoordinates = kaKaoLocalApiService
             .getTmCoordinates(longitude, latitude)
             .body()
@@ -43,7 +43,7 @@ object Repository {
             ?.minByOrNull { it.tm ?: Double.MAX_VALUE }
     }
 
-    suspend fun getLatestAirQuality(stationName: String): MeasuredValues? =
+    suspend fun getLatestAirQuality(stationName: String): MeasuredValue? =
         airKoreaApiService
             .getRealtimeAirQuality(stationName)
             .body()

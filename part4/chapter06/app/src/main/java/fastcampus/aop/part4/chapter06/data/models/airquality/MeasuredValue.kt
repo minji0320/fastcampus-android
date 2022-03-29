@@ -3,7 +3,7 @@ package fastcampus.aop.part4.chapter06.data.models.airquality
 
 import com.google.gson.annotations.SerializedName
 
-data class MeasuredValues(
+data class MeasuredValue(
     @SerializedName("coFlag")
     val coFlag: Any?,
     @SerializedName("coGrade")
