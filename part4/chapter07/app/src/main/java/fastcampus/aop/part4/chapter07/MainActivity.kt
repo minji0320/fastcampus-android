@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -66,12 +67,22 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun fetchRandomPhotos(query: String? = null) = scope.launch {
-        Repository.getRandomPhotos(query)?.let { photos ->
-            (binding.recyclerView.adapter as? PhotoAdapter)?.apply {
-                this.photos = photos
-                notifyDataSetChanged()
-            }
+        try {
+            Repository.getRandomPhotos(query)?.let { photos ->
+                binding.errorDescriptionTextView.visibility = View.GONE
 
+                (binding.recyclerView.adapter as? PhotoAdapter)?.apply {
+                    this.photos = photos
+                    notifyDataSetChanged()
+                }
+
+                binding.recyclerView.visibility = View.VISIBLE
+            }
+        } catch (exception: Exception) {
+            binding.recyclerView.visibility = View.INVISIBLE
+            binding.errorDescriptionTextView.visibility = View.VISIBLE
+        } finally {
+            binding.shimmerLayout.visibility = View.GONE
             binding.refreshLayout.isRefreshing = false
         }
     }
