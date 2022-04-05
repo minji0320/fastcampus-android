@@ -1,6 +1,8 @@
 # fastcampus-android
 🔥 30개 프로젝트로 배우는 Android 앱 개발 with Kotlin (2022.02.03 ~ ) 🔥 
 
+## 학습 노트
+[Notion : 30개 프로젝트로 배우는 Android 앱 개발](https://android-study.notion.site/30-Android-5635997afbcc49afb2293211d0f30084)
 
 ## 강의 목차 및 수강 현황
 
