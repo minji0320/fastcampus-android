@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import fastcampus.aop.part5.chapter01.data.entity.ToDoEntity
 import fastcampus.aop.part5.chapter01.domain.todo.DeleteToDoItemUseCase
 import fastcampus.aop.part5.chapter01.domain.todo.GetToDoItemUseCase
+import fastcampus.aop.part5.chapter01.domain.todo.InsertToDoItemUseCase
 import fastcampus.aop.part5.chapter01.domain.todo.UpdateToDoUseCase
 import fastcampus.aop.part5.chapter01.presentation.BaseViewModel
 import kotlinx.coroutines.Job
@@ -18,6 +19,7 @@ internal class DetailViewModel(
     private val getToDoItemUseCase: GetToDoItemUseCase,
     private val deleteToDoItemUseCase: DeleteToDoItemUseCase,
     private val updateToDoUseCase: UpdateToDoUseCase,
+    private val insertToDoItemUseCase: InsertToDoItemUseCase,
 ) : BaseViewModel() {
 
     private var _toDoDetailLiveData =
@@ -40,7 +42,7 @@ internal class DetailViewModel(
                 }
             }
             DetailMode.WRITE -> {
-                // Todo 나중에 작성모드로 상세화면 진입 로직 처리
+                _toDoDetailLiveData.postValue(ToDoDetailState.Write)
             }
         }
     }
@@ -80,7 +82,18 @@ internal class DetailViewModel(
                 }
             }
             DetailMode.WRITE -> {
-                // Todo 나중에 작성모드로 작성 처리
+                try {
+                    val toDoEntity = ToDoEntity(
+                        title = title,
+                        description = description
+                    )
+                    id = insertToDoItemUseCase(toDoEntity)
+                    _toDoDetailLiveData.postValue(ToDoDetailState.Success(toDoEntity))
+                    detailMode = DetailMode.DETAIL
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    _toDoDetailLiveData.postValue(ToDoDetailState.Error)
+                }
             }
         }
     }
