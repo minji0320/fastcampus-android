@@ -2,7 +2,6 @@ package fastcampus.aop.part5.chapter01.presentation.list
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import fastcampus.aop.part5.chapter01.data.entity.ToDoEntity
 import fastcampus.aop.part5.chapter01.domain.todo.DeleteAllToDoItemUseCase
@@ -21,7 +20,7 @@ import kotlinx.coroutines.launch
 internal class ListViewModel(
     private val getToDoListUseCase: GetToDoListUseCase,
     private val updateToDoUseCase: UpdateToDoUseCase,
-    private val deleteAllToDoItemUseCase: DeleteAllToDoItemUseCase
+    private val deleteAllToDoItemUseCase: DeleteAllToDoItemUseCase,
 ) : BaseViewModel() {
 
     private var _toDoListLiveData = MutableLiveData<ToDoListState>(ToDoListState.UnInitialized)

@@ -17,12 +17,12 @@ interface ToDoRepository {
 
     suspend fun insertToDoItem(toDoItem: ToDoEntity): Long
 
-    suspend fun updateToDoItem(toDoItem: ToDoEntity): Boolean
+    suspend fun updateToDoItem(toDoItem: ToDoEntity): Int
 
     suspend fun getToDoItem(itemId: Long): ToDoEntity?
 
     suspend fun deleteAll()
 
-    suspend fun deleteToDoItem(id: Long): Boolean
+    suspend fun deleteToDoItem(id: Long): Int
 
 }
