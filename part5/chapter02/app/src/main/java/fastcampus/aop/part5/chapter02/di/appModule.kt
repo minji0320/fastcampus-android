@@ -7,10 +7,20 @@ import fastcampus.aop.part5.chapter02.data.network.provideProductRetrofit
 import fastcampus.aop.part5.chapter02.data.repository.DefaultProductRepository
 import fastcampus.aop.part5.chapter02.data.repository.ProductRepository
 import fastcampus.aop.part5.chapter02.domain.GetProductItemUseCase
+import fastcampus.aop.part5.chapter02.presentation.list.ProductListFragment
+import fastcampus.aop.part5.chapter02.presentation.list.ProductListViewModel
+import fastcampus.aop.part5.chapter02.presentation.main.MainViewModel
+import fastcampus.aop.part5.chapter02.presentation.profile.ProfileViewModel
 import kotlinx.coroutines.Dispatchers
+import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
+
+    // ViewModels
+    viewModel { MainViewModel() }
+    viewModel { ProductListViewModel() }
+    viewModel { ProfileViewModel() }
 
     // Coroutines Dispatcher
     single { Dispatchers.Main }
