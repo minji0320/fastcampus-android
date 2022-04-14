@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="fastcampus.aop.part5.chapter02">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".AopPart5Chapter02Application"
         android:allowBackup="true"

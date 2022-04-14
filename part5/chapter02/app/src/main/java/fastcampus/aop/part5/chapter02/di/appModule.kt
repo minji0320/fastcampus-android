@@ -7,6 +7,7 @@ import fastcampus.aop.part5.chapter02.data.network.provideProductRetrofit
 import fastcampus.aop.part5.chapter02.data.repository.DefaultProductRepository
 import fastcampus.aop.part5.chapter02.data.repository.ProductRepository
 import fastcampus.aop.part5.chapter02.domain.GetProductItemUseCase
+import fastcampus.aop.part5.chapter02.domain.GetProductListUseCase
 import fastcampus.aop.part5.chapter02.presentation.list.ProductListFragment
 import fastcampus.aop.part5.chapter02.presentation.list.ProductListViewModel
 import fastcampus.aop.part5.chapter02.presentation.main.MainViewModel
@@ -19,7 +20,7 @@ val appModule = module {
 
     // ViewModels
     viewModel { MainViewModel() }
-    viewModel { ProductListViewModel() }
+    viewModel { ProductListViewModel(get()) }
     viewModel { ProfileViewModel() }
 
     // Coroutines Dispatcher
@@ -28,6 +29,7 @@ val appModule = module {
 
     // UseCases
     factory { GetProductItemUseCase(get()) }
+    factory { GetProductListUseCase(get()) }
 
     // Repositories
     single<ProductRepository> { DefaultProductRepository(get(), get()) }
