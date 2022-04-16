@@ -9,6 +9,7 @@ import fastcampus.aop.part5.chapter02.databinding.FragmentProfileBinding
 import fastcampus.aop.part5.chapter02.extensions.toast
 import fastcampus.aop.part5.chapter02.presentation.BaseFragment
 import fastcampus.aop.part5.chapter02.presentation.adapter.ProductListAdapter
+import fastcampus.aop.part5.chapter02.presentation.detail.ProductDetailActivity
 import fastcampus.aop.part5.chapter02.presentation.main.MainActivity
 import org.koin.android.ext.android.inject
 
@@ -26,12 +27,12 @@ internal class ProductListFragment :
 
     private val adapter = ProductListAdapter()
 
-//    private val startProductDetailForResult =
-//        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-//            if (result.resultCode == ProductDetailActivity.PRODUCT_ORDERED_RESULT_CODE) {
-//                (requireActivity() as MainActivity).viewModel.refreshOrderList()
-//            }
-//        }
+    private val startProductDetailForResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == ProductDetailActivity.PRODUCT_ORDERED_RESULT_CODE) {
+                (requireActivity() as MainActivity).viewModel.refreshOrderList()
+            }
+        }
 
     override fun observeData() = viewModel.productListStateLiveData.observe(this) {
         when (it) {
@@ -73,10 +74,9 @@ internal class ProductListFragment :
             emptyResultTextView.isGone = true
             recyclerView.isGone = false
             adapter.setProductList(state.productList) {
-//                startProductDetailForResult.launch(
-//                    ProductDetailActivity.newIntent(requireContext(), it.id)
-//                )
-                requireContext().toast("Product Entity : $it")
+                startProductDetailForResult.launch(
+                    ProductDetailActivity.newIntent(requireContext(), it.id)
+                )
             }
         }
     }

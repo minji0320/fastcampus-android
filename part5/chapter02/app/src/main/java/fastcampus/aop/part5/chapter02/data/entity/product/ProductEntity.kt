@@ -1,9 +1,12 @@
 package fastcampus.aop.part5.chapter02.data.entity.product
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.util.*
 
+@Entity
 data class ProductEntity(
-    val id: Long,
+    @PrimaryKey val id: Long,
     val createAt: Date,
     val productName: String,
     val productPrice: Int,
