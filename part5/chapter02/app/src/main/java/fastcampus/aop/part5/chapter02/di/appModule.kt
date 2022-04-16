@@ -6,6 +6,7 @@ import fastcampus.aop.part5.chapter02.data.network.buildOkHttpClient
 import fastcampus.aop.part5.chapter02.data.network.provideGsonConverterFactory
 import fastcampus.aop.part5.chapter02.data.network.provideProductApiService
 import fastcampus.aop.part5.chapter02.data.network.provideProductRetrofit
+import fastcampus.aop.part5.chapter02.data.preference.PreferenceManager
 import fastcampus.aop.part5.chapter02.data.repository.DefaultProductRepository
 import fastcampus.aop.part5.chapter02.data.repository.ProductRepository
 import fastcampus.aop.part5.chapter02.domain.GetProductItemUseCase
@@ -18,6 +19,7 @@ import fastcampus.aop.part5.chapter02.presentation.main.MainViewModel
 import fastcampus.aop.part5.chapter02.presentation.profile.ProfileViewModel
 import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidApplication
+import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -26,7 +28,7 @@ val appModule = module {
     // ViewModels
     viewModel { MainViewModel() }
     viewModel { ProductListViewModel(get()) }
-    viewModel { ProfileViewModel() }
+    viewModel { ProfileViewModel(get()) }
     viewModel { (productId: Long) -> ProductDetailViewModel(productId, get(), get()) }
 
     // Coroutines Dispatcher
@@ -48,6 +50,8 @@ val appModule = module {
     single { provideProductRetrofit(get(), get()) }
 
     single { provideProductApiService(get()) }
+
+    single { PreferenceManager(androidContext()) }
 
     // Database
     single { provideDB(androidApplication()) }
