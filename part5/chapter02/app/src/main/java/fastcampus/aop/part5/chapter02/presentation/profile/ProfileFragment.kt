@@ -15,6 +15,8 @@ import fastcampus.aop.part5.chapter02.databinding.FragmentProfileBinding
 import fastcampus.aop.part5.chapter02.extensions.loadCenterCrop
 import fastcampus.aop.part5.chapter02.extensions.toast
 import fastcampus.aop.part5.chapter02.presentation.BaseFragment
+import fastcampus.aop.part5.chapter02.presentation.adapter.ProductListAdapter
+import fastcampus.aop.part5.chapter02.presentation.detail.ProductDetailActivity
 import org.koin.android.ext.android.inject
 
 internal class ProfileFragment : BaseFragment<ProfileViewModel, FragmentProfileBinding>() {
@@ -24,6 +26,8 @@ internal class ProfileFragment : BaseFragment<ProfileViewModel, FragmentProfileB
     }
 
     override val viewModel by inject<ProfileViewModel>()
+
+    private val adapter = ProductListAdapter()
 
     private val gso: GoogleSignInOptions by lazy {
         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -70,12 +74,14 @@ internal class ProfileFragment : BaseFragment<ProfileViewModel, FragmentProfileB
     }
 
     private fun initViews() = with(binding) {
+        recyclerView.adapter = adapter
+
         loginButton.setOnClickListener {
             signInGoogle()
         }
 
         logoutButton.setOnClickListener {
-
+            viewModel.signOut()
         }
     }
 
@@ -90,6 +96,7 @@ internal class ProfileFragment : BaseFragment<ProfileViewModel, FragmentProfileB
     }
 
     private fun handleLoginState(state: ProfileState.Login) = with(binding) {
+        progressBar.isVisible = true
         val credential = GoogleAuthProvider.getCredential(state.idToken, null)
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener(requireActivity()) { task ->
@@ -127,6 +134,9 @@ internal class ProfileFragment : BaseFragment<ProfileViewModel, FragmentProfileB
         } else {
             emptyResultTextView.isGone = true
             recyclerView.isGone = false
+            adapter.setProductList(state.productList) {
+                startActivity(ProductDetailActivity.newIntent(requireContext(), it.id))
+            }
         }
     }
 

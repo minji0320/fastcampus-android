@@ -7,6 +7,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import fastcampus.aop.part5.chapter02.R
 import fastcampus.aop.part5.chapter02.databinding.ActivityMainBinding
 import fastcampus.aop.part5.chapter02.presentation.BaseActivity
+import fastcampus.aop.part5.chapter02.presentation.BaseFragment
 import fastcampus.aop.part5.chapter02.presentation.list.ProductListFragment
 import fastcampus.aop.part5.chapter02.presentation.profile.ProfileFragment
 import org.koin.android.ext.android.inject
@@ -57,11 +58,11 @@ internal class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>()
     }
 
     override fun observeData() = viewModel.mainStateLiveData.observe(this) {
-        when(it) {
+        when (it) {
             is MainState.RefreshOrderList -> {
                 binding.bottomNav.selectedItemId = R.id.menu_profile
                 val fragment = supportFragmentManager.findFragmentByTag(ProfileFragment.TAG)
-                // TODO fragment BaseFragment 타입 캐스팅 fetchData()
+                (fragment as? BaseFragment<*, *>)?.viewModel?.fetchData()
             }
         }
     }

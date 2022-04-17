@@ -150,7 +150,7 @@ class PreferenceManager(
         return prefs.getString(KEY_ID_TOKEN, null)
     }
 
-    fun removedToken() {
+    fun removeIdToken() {
         editor.putString(KEY_ID_TOKEN, null)
         editor.apply()
     }

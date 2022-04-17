@@ -9,11 +9,12 @@ import fastcampus.aop.part5.chapter02.data.network.provideProductRetrofit
 import fastcampus.aop.part5.chapter02.data.preference.PreferenceManager
 import fastcampus.aop.part5.chapter02.data.repository.DefaultProductRepository
 import fastcampus.aop.part5.chapter02.data.repository.ProductRepository
+import fastcampus.aop.part5.chapter02.domain.DeleteOrderedProductListUseCase
+import fastcampus.aop.part5.chapter02.domain.GetOrderedProductListUseCase
 import fastcampus.aop.part5.chapter02.domain.GetProductItemUseCase
 import fastcampus.aop.part5.chapter02.domain.GetProductListUseCase
 import fastcampus.aop.part5.chapter02.domain.OrderProductItemUseCase
 import fastcampus.aop.part5.chapter02.presentation.detail.ProductDetailViewModel
-import fastcampus.aop.part5.chapter02.presentation.list.ProductListFragment
 import fastcampus.aop.part5.chapter02.presentation.list.ProductListViewModel
 import fastcampus.aop.part5.chapter02.presentation.main.MainViewModel
 import fastcampus.aop.part5.chapter02.presentation.profile.ProfileViewModel
@@ -28,7 +29,7 @@ val appModule = module {
     // ViewModels
     viewModel { MainViewModel() }
     viewModel { ProductListViewModel(get()) }
-    viewModel { ProfileViewModel(get()) }
+    viewModel { ProfileViewModel(get(), get(), get()) }
     viewModel { (productId: Long) -> ProductDetailViewModel(productId, get(), get()) }
 
     // Coroutines Dispatcher
@@ -39,6 +40,8 @@ val appModule = module {
     factory { GetProductItemUseCase(get()) }
     factory { GetProductListUseCase(get()) }
     factory { OrderProductItemUseCase(get()) }
+    factory { GetOrderedProductListUseCase(get()) }
+    factory { DeleteOrderedProductListUseCase(get()) }
 
     // Repositories
     single<ProductRepository> { DefaultProductRepository(get(), get(), get()) }
