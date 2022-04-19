@@ -20,6 +20,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isGone
 import fastcampus.aop.part5.chapter03.databinding.ActivityMainBinding
 import fastcampus.aop.part5.chapter03.extensions.loadCenterCrop
 import fastcampus.aop.part5.chapter03.util.PathUtil
@@ -58,6 +59,8 @@ class MainActivity : AppCompatActivity() {
     private var root: View? = null
 
     private var isCapturing: Boolean = false
+
+    private var isFlashEnabled = false
 
     // 화면 전환 등의 이벤트 감지를 위해 필요
     private val displayListener = object : DisplayManager.DisplayListener {
@@ -124,6 +127,7 @@ class MainActivity : AppCompatActivity() {
                 )
                 preview.setSurfaceProvider(viewFinder.surfaceProvider)
                 bindZoomListener()
+                initFlashAndAddListener()
                 bindCaptureListener()
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -150,6 +154,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun initFlashAndAddListener() = with(binding) {
+        val hasFlash = camera?.cameraInfo?.hasFlashUnit() ?: false
+        flashSwitch.isGone = hasFlash.not()
+        if (hasFlash) {
+            flashSwitch.setOnCheckedChangeListener { _, isChecked ->
+                isFlashEnabled = isChecked
+            }
+        } else {
+            isFlashEnabled = false
+            flashSwitch.setOnCheckedChangeListener(null)
+        }
+    }
+
     private fun bindCaptureListener() = with(binding) {
         captureButton.setOnClickListener {
             if (isCapturing.not()) {
@@ -171,6 +188,7 @@ class MainActivity : AppCompatActivity() {
         )
 
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
+        if (isFlashEnabled) flashLight(true)
         imageCapture.takePicture(outputOptions,
             cameraExecutor,
             object : ImageCapture.OnImageSavedCallback {
@@ -183,9 +201,17 @@ class MainActivity : AppCompatActivity() {
                 override fun onError(e: ImageCaptureException) {
                     e.printStackTrace()
                     isCapturing = false
+                    flashLight(false)
                 }
 
             })
+    }
+
+    private fun flashLight(light: Boolean) {
+        val hasFlash = camera?.cameraInfo?.hasFlashUnit() ?: false
+        if (hasFlash) {
+            camera?.cameraControl?.enableTorch(light)
+        }
     }
 
     private fun updateSavedImageContent() {
@@ -202,10 +228,12 @@ class MainActivity : AppCompatActivity() {
                     binding.previewImageView.loadCenterCrop(url = it.toString(), corner = 4f)
                 }
                 uriList.add(it)
+                flashLight(false)
                 false
             } catch (e: Exception) {
                 e.printStackTrace()
                 Toast.makeText(this, "파일이 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
+                flashLight(false)
                 false
             }
         }
