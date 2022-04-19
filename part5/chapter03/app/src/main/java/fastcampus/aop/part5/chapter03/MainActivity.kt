@@ -1,5 +1,6 @@
 package fastcampus.aop.part5.chapter03
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -10,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.ScaleGestureDetector
 import android.view.View
 import android.widget.Toast
 import androidx.camera.core.*
@@ -121,11 +123,31 @@ class MainActivity : AppCompatActivity() {
                     this@MainActivity, cameraSelector, preview, imageCapture
                 )
                 preview.setSurfaceProvider(viewFinder.surfaceProvider)
+                bindZoomListener()
                 bindCaptureListener()
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }, cameraMainExecutor)
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun bindZoomListener() = with(binding) {
+        val listener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+            override fun onScale(detector: ScaleGestureDetector): Boolean {
+                val currentZoomRatio = camera?.cameraInfo?.zoomState?.value?.zoomRatio ?: 1f
+                val delta = detector.scaleFactor
+                camera?.cameraControl?.setZoomRatio(currentZoomRatio * delta)
+                return true
+
+            }
+        }
+
+        val scaleGestureDetector = ScaleGestureDetector(this@MainActivity, listener)
+        viewFinder.setOnTouchListener { _, motionEvent ->
+            scaleGestureDetector.onTouchEvent(motionEvent)
+            return@setOnTouchListener true
+        }
     }
 
     private fun bindCaptureListener() = with(binding) {
