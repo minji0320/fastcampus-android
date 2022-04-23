@@ -50,4 +50,20 @@ dependencies {
     implementation 'com.google.firebase:firebase-database-ktx'
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.firebase:firebase-storage-ktx'
+
+    // CameraX core library using camera2 implementation
+    //noinspection GradleDependency
+    implementation "androidx.camera:camera-camera2:$camerax_version"
+    // CameraX Lifecycle Library
+    //noinspection GradleDependency
+    implementation "androidx.camera:camera-lifecycle:$camerax_version"
+    // CameraX View class
+    //noinspection GradleDependency
+    implementation "androidx.camera:camera-view:$camerax_version"
+
+    // ViewPager2
+    implementation 'androidx.viewpager2:viewpager2:1.1.0-beta01'
+
+    // Circle Indicator
+    implementation 'me.relex:circleindicator:2.1.6'
 }
