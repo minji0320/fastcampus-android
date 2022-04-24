@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
@@ -20,6 +21,9 @@ import com.google.firebase.storage.ktx.storage
 import fastcampus.aop.part5.chapter04.DBKey.Companion.DB_ARTICLES
 import fastcampus.aop.part5.chapter04.databinding.ActivityAddArticleBinding
 import fastcampus.aop.part5.chapter04.photo.CameraActivity
+import fastcampus.aop.part5.chapter04.photo.PhotoListAdapter
+import kotlinx.coroutines.*
+import kotlinx.coroutines.tasks.await
 
 class AddArticleActivity : AppCompatActivity() {
 
@@ -32,7 +36,7 @@ class AddArticleActivity : AppCompatActivity() {
     }
 
     private lateinit var binding: ActivityAddArticleBinding
-    private var selectedUri: Uri? = null
+    private var imageUriList: ArrayList<Uri> = arrayListOf()
 
     private val auth: FirebaseAuth by lazy {
         Firebase.auth
@@ -46,6 +50,8 @@ class AddArticleActivity : AppCompatActivity() {
         Firebase.database.reference.child(DB_ARTICLES)
     }
 
+    private val photoListAdapter = PhotoListAdapter { uri -> removePhoto(uri) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddArticleBinding.inflate(layoutInflater)
@@ -55,6 +61,8 @@ class AddArticleActivity : AppCompatActivity() {
     }
 
     private fun initViews() = with(binding) {
+        photoRecyclerView.adapter = photoListAdapter
+
         imageAddButton.setOnClickListener {
             showPictureUploadDialog()
         }
@@ -66,47 +74,55 @@ class AddArticleActivity : AppCompatActivity() {
 
             showProgress()
 
-            if (selectedUri != null) {
-                val photoUri = selectedUri ?: return@setOnClickListener
-                uploadPhoto(
-                    photoUri,
-                    successHandler = { uri ->
-                        uploadArticle(sellerId, title, content, uri)
-                    },
-                    errorHandler = {
-                        Toast.makeText(this@AddArticleActivity,
-                            "사진 업로드에 실패했습니다.",
-                            Toast.LENGTH_SHORT).show()
-                        hideProgress()
-                    }
-                )
+            if (imageUriList.isNotEmpty()) {
+                lifecycleScope.launch {
+                    val results = uploadPhoto(imageUriList)
+                    uploadArticle(sellerId, title, content, results.filterIsInstance<String>())
+                }
+//                uploadPhoto(
+//                    imageUriList.first(),
+//                    successHandler = { uri ->
+//                        uploadArticle(sellerId, title, content, uri)
+//                    },
+//                    errorHandler = {
+//                        Toast.makeText(this@AddArticleActivity,
+//                            "사진 업로드에 실패했습니다.",
+//                            Toast.LENGTH_SHORT).show()
+//                        hideProgress()
+//                    }
+//                )
             } else {
-                uploadArticle(sellerId, title, content, "")
+                uploadArticle(sellerId, title, content, listOf())
             }
         }
     }
 
-    private fun uploadPhoto(uri: Uri, successHandler: (String) -> Unit, errorHandler: () -> Unit) {
-        val fileName = "${System.currentTimeMillis()}.png"
-        storage.reference.child("article/photo").child(fileName)
-            .putFile(uri)
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    storage.reference.child("article/photo").child(fileName)
+    private suspend fun uploadPhoto(uriList: List<Uri>) = withContext(Dispatchers.IO) {
+        val uploadDeferred: List<Deferred<Any>> = uriList.mapIndexed { index, uri ->
+            lifecycleScope.async {
+                try {
+                    val fileName = "image_${index}.png"
+                    return@async storage
+                        .reference
+                        .child("article/photo")
+                        .child(fileName)
+                        .putFile(uri)
+                        .await()
+                        .storage
                         .downloadUrl
-                        .addOnSuccessListener { uri ->
-                            successHandler(uri.toString())
-                        }.addOnFailureListener {
-                            errorHandler()
-                        }
-                } else {
-                    errorHandler()
+                        .await()
+                        .toString()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    return@async Pair(uri, e)
                 }
             }
+        }
+        return@withContext uploadDeferred.awaitAll()
     }
 
-    private fun uploadArticle(sellerId: String, title: String, content: String, imageUrl: String) {
-        val model = ArticleModel(sellerId, title, System.currentTimeMillis(), content, imageUrl)
+    private fun uploadArticle(sellerId: String, title: String, content: String, imageUrlList: List<String>) {
+        val model = ArticleModel(sellerId, title, System.currentTimeMillis(), content, imageUrlList)
         articleDB.push().setValue(model)
 
         hideProgress()
@@ -137,7 +153,6 @@ class AddArticleActivity : AppCompatActivity() {
     }
 
 
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -149,8 +164,8 @@ class AddArticleActivity : AppCompatActivity() {
             GALLERY_REQUEST_CODE -> {
                 val uri = data?.data
                 if (uri != null) {
-                    binding.photoImageView.setImageURI(uri)
-                    selectedUri = uri
+                    imageUriList.add(uri)
+                    photoListAdapter.setPhotoList(imageUriList)
                 } else {
                     Toast.makeText(this, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
                 }
@@ -159,7 +174,8 @@ class AddArticleActivity : AppCompatActivity() {
                 data?.let {
                     val uriList = it.getParcelableArrayListExtra<Uri>(URI_LIST_KEY)
                     uriList?.let { list ->
-
+                        imageUriList.addAll(list)
+                        photoListAdapter.setPhotoList(imageUriList)
                     }
                 }
             }
@@ -174,7 +190,8 @@ class AddArticleActivity : AppCompatActivity() {
             .setTitle("권한이 필요합니다.")
             .setMessage("사진을 가져오기 위해 필요합니다.")
             .setPositiveButton("동의") { _, _ ->
-                requestPermissions(arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE), PERMISSION_REQUEST_CODE)
+                requestPermissions(arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
+                    PERMISSION_REQUEST_CODE)
             }
             .create()
             .show()
@@ -229,4 +246,8 @@ class AddArticleActivity : AppCompatActivity() {
         startActivityForResult(intent, GALLERY_REQUEST_CODE)
     }
 
+    private fun removePhoto(uri: Uri) {
+        imageUriList.remove(uri)
+        photoListAdapter.setPhotoList(imageUriList)
+    }
 }
