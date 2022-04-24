@@ -70,29 +70,17 @@ class AddArticleActivity : AppCompatActivity() {
         submitButton.setOnClickListener {
             val title = titleEditText.text.toString()
             val content = contentEditText.text.toString()
-            val sellerId = auth.currentUser?.uid.orEmpty()
+            val userId = auth.currentUser?.uid.orEmpty()
 
             showProgress()
 
             if (imageUriList.isNotEmpty()) {
                 lifecycleScope.launch {
                     val results = uploadPhoto(imageUriList)
-                    uploadArticle(sellerId, title, content, results.filterIsInstance<String>())
+                    afterUploadPhoto(results, title, content, userId)
                 }
-//                uploadPhoto(
-//                    imageUriList.first(),
-//                    successHandler = { uri ->
-//                        uploadArticle(sellerId, title, content, uri)
-//                    },
-//                    errorHandler = {
-//                        Toast.makeText(this@AddArticleActivity,
-//                            "사진 업로드에 실패했습니다.",
-//                            Toast.LENGTH_SHORT).show()
-//                        hideProgress()
-//                    }
-//                )
             } else {
-                uploadArticle(sellerId, title, content, listOf())
+                uploadArticle(userId, title, content, listOf())
             }
         }
     }
@@ -121,8 +109,41 @@ class AddArticleActivity : AppCompatActivity() {
         return@withContext uploadDeferred.awaitAll()
     }
 
-    private fun uploadArticle(sellerId: String, title: String, content: String, imageUrlList: List<String>) {
-        val model = ArticleModel(sellerId, title, System.currentTimeMillis(), content, imageUrlList)
+    private fun afterUploadPhoto(
+        results: List<Any>,
+        title: String,
+        content: String,
+        userId: String,
+    ) {
+        val errorResults = results.filterIsInstance<Pair<Uri, Exception>>()
+        val successResults = results.filterIsInstance<String>()
+
+        when {
+            errorResults.isNotEmpty() && successResults.isNotEmpty() -> {
+                photoUploadErrorButContinueDialog(
+                    errorResults,
+                    successResults,
+                    title,
+                    content,
+                    userId
+                )
+            }
+            errorResults.isEmpty() && successResults.isEmpty() -> {
+                uploadError()
+            }
+            else -> {
+                uploadArticle(userId, title, content, results.filterIsInstance<String>())
+            }
+        }
+    }
+
+    private fun uploadArticle(
+        userId: String,
+        title: String,
+        content: String,
+        imageUrlList: List<String>,
+    ) {
+        val model = ArticleModel(userId, title, System.currentTimeMillis(), content, imageUrlList)
         articleDB.push().setValue(model)
 
         hideProgress()
@@ -249,5 +270,29 @@ class AddArticleActivity : AppCompatActivity() {
     private fun removePhoto(uri: Uri) {
         imageUriList.remove(uri)
         photoListAdapter.setPhotoList(imageUriList)
+    }
+
+    private fun photoUploadErrorButContinueDialog(
+        errorResults: List<Pair<Uri, Exception>>,
+        successResults: List<String>,
+        title: String,
+        content: String,
+        userId: String,
+    ) {
+        AlertDialog.Builder(this)
+            .setTitle("특정 이미지 업로드 실패")
+            .setMessage("업로드에 실패한 이미지가 있습니다." + errorResults.map { (uri, _) ->
+                "$uri\n"
+            } + "그럼에도 불구하고 업로드 하시겠습니까?")
+            .setPositiveButton("업로드") { _, _ ->
+                uploadArticle(userId, title, content, successResults)
+            }
+            .create()
+            .show()
+    }
+
+    private fun uploadError() {
+        Toast.makeText(this, "사진 업로드에 실패했습니다.", Toast.LENGTH_SHORT).show()
+        hideProgress()
     }
 }
