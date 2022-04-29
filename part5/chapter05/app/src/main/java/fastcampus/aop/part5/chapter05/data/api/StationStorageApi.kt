@@ -12,8 +12,6 @@ class StationStorageApi(
     private val sheetReference = firebaseStorage.reference.child(STATION_DATA_FILE_NAME)
 
     override suspend fun getStationDataUpdatedTimeMillis(): Long =
-        // metadata -> task 리턴 (비동기를 위한 것)
-        // await -> implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.4.3'
         sheetReference.metadata.await().updatedTimeMillis
 
     override suspend fun getStationSubways(): List<Pair<StationEntity, SubwayEntity>> {
@@ -30,5 +28,4 @@ class StationStorageApi(
     companion object {
         private const val STATION_DATA_FILE_NAME = "station_data.csv"
     }
-
 }
