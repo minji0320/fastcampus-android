@@ -8,6 +8,7 @@ import fastcampus.aop.part5.chapter05.R
 import fastcampus.aop.part5.chapter05.databinding.ActivityMainBinding
 import fastcampus.aop.part5.chapter05.extension.toGone
 import fastcampus.aop.part5.chapter05.extension.toVisible
+import fastcampus.aop.part5.chapter05.presentation.stationarrivals.StationArrivalsFragmentArgs
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,8 +38,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun bindViews() {
-        navigationController.addOnDestinationChangedListener { _, destination, _ ->
+        navigationController.addOnDestinationChangedListener { _, destination, argument ->
             if (destination.id == R.id.station_arrivals_dest) {
+                title = StationArrivalsFragmentArgs.fromBundle(argument!!).station.name
                 binding.toolbar.toVisible()
             } else {
                 binding.toolbar.toGone()

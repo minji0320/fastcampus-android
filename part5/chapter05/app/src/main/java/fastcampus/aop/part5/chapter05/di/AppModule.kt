@@ -13,6 +13,9 @@ import fastcampus.aop.part5.chapter05.data.preference.PreferenceManager
 import fastcampus.aop.part5.chapter05.data.preference.SharedPreferenceManager
 import fastcampus.aop.part5.chapter05.data.repository.StationRepository
 import fastcampus.aop.part5.chapter05.data.repository.StationRepositoryImpl
+import fastcampus.aop.part5.chapter05.presentation.stationarrivals.StationArrivalsContract
+import fastcampus.aop.part5.chapter05.presentation.stationarrivals.StationArrivalsFragment
+import fastcampus.aop.part5.chapter05.presentation.stationarrivals.StationArrivalsPresenter
 import fastcampus.aop.part5.chapter05.presentation.stations.StationsContract
 import fastcampus.aop.part5.chapter05.presentation.stations.StationsFragment
 import fastcampus.aop.part5.chapter05.presentation.stations.StationsPresenter
@@ -70,6 +73,10 @@ val appModule = module {
     // scope 내에서는 데이터 공유 가능
     scope<StationsFragment> {
         scoped<StationsContract.Presenter> { StationsPresenter(getSource(), get()) }
+    }
+
+    scope<StationArrivalsFragment> {
+        scoped<StationArrivalsContract.Presenter> { StationArrivalsPresenter(getSource(), get(), get()) }
     }
 
 }

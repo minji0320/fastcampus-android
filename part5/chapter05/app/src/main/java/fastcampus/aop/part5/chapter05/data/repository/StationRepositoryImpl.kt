@@ -46,8 +46,8 @@ class StationRepositoryImpl(
             .body()
             ?.realtimeArrivalList
             ?.toArrivalInformation()
-            ?.distinctBy { it.direction }
-            ?.sortedBy { it.subway }
+            ?.distinctBy { it.direction }   // 중복되는 것 제거
+            ?.sortedBy { it.subway }        // 호선 별로 정리
             ?: throw RuntimeException("도착 정보를 불러오는 데에 실패했습니다.")
     }
 
