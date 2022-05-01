@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 
 class StationsPresenter(
     private val view: StationsContract.View,
-    private val stationRepository: StationRepository
+    private val stationRepository: StationRepository,
 ) : StationsContract.Presenter {
 
     override val scope: CoroutineScope = MainScope()
@@ -59,5 +59,11 @@ class StationsPresenter(
                 view.hideLoadingIndicator()
             }
             .launchIn(scope)
+    }
+
+    override fun toggleStationFavorite(station: Station) {
+        scope.launch {
+            stationRepository.updateStation(station.copy(isFavorited = !station.isFavorited))
+        }
     }
 }

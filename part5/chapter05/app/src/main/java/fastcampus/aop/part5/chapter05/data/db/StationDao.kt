@@ -5,6 +5,7 @@ import fastcampus.aop.part5.chapter05.data.db.entity.StationEntity
 import fastcampus.aop.part5.chapter05.data.db.entity.StationSubwayCrossRefEntity
 import fastcampus.aop.part5.chapter05.data.db.entity.StationWithSubwaysEntity
 import fastcampus.aop.part5.chapter05.data.db.entity.SubwayEntity
+import fastcampus.aop.part5.chapter05.domain.Station
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -39,4 +40,6 @@ interface StationDao {
         )
     }
 
+    @Update
+    suspend fun updateStation(station: StationEntity)
 }
