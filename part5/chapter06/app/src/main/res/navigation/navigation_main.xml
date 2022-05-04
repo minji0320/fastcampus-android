@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_tracking_items">
 
         <action
-            android:id="@+id/to_add_tracing_item"
+            android:id="@+id/to_add_tracking_item"
             app:destination="@id/add_tracking_item_dest" />
 
         <action
