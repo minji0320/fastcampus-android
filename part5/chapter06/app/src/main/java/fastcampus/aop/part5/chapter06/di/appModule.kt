@@ -4,9 +4,7 @@ import fastcampus.aop.part5.chapter06.BuildConfig
 import fastcampus.aop.part5.chapter06.data.api.SweetTrackerApi
 import fastcampus.aop.part5.chapter06.data.api.Url
 import fastcampus.aop.part5.chapter06.data.db.AppDatabase
-import fastcampus.aop.part5.chapter06.data.repository.TrackingItemRepository
-import fastcampus.aop.part5.chapter06.data.repository.TrackingItemRepositoryImpl
-import fastcampus.aop.part5.chapter06.data.repository.TrackingItemRepositoryStub
+import fastcampus.aop.part5.chapter06.data.repository.*
 import fastcampus.aop.part5.chapter06.presentation.trackingitems.TrackingItemsContract
 import fastcampus.aop.part5.chapter06.presentation.trackingitems.TrackingItemsFragment
 import fastcampus.aop.part5.chapter06.presentation.trackingitems.TrackingItemsPresenter
@@ -52,8 +50,8 @@ val appModule = module {
     }
 
     // Repository
-//    single<TrackingItemRepository> { TrackingItemRepositoryImpl(get(), get(), get()) }
-    single<TrackingItemRepository> { TrackingItemRepositoryStub() }
+    single<TrackingItemRepository> { TrackingItemRepositoryImpl(get(), get(), get()) }
+    single<ShippingCompanyRepository> { ShippingCompanyRepositoryImpl(get(), get(), get(), get()) }
 
     // Presentation
     scope<TrackingItemsFragment> {
