@@ -5,6 +5,7 @@ import fastcampus.aop.part5.chapter06.data.entity.TrackingItem
 import fastcampus.aop.part5.chapter06.data.repository.TrackingItemRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class TrackingItemsPresenter(
@@ -15,6 +16,14 @@ class TrackingItemsPresenter(
     override var trackingItemInformation: List<Pair<TrackingItem, TrackingInformation>> = emptyList()
 
     override val scope: CoroutineScope = MainScope()
+
+    init {
+        scope.launch {
+            trackingItemRepository
+                .trackingItems
+                .collect { refresh() }
+        }
+    }
 
     override fun onViewCreated() {
         fetchTrackingInformation()
