@@ -14,8 +14,8 @@ import fastcampus.aop.part5.chapter06.data.entity.TrackingItem
 )
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun TrackingItemDao(): TrackingItemDao
-    abstract fun ShippingCompanyDao(): ShippingCompanyDao
+    abstract fun trackingItemDao(): TrackingItemDao
+    abstract fun shippingCompanyDao(): ShippingCompanyDao
 
     companion object {
         private const val DATABASE_NAME = "tracking.db"
