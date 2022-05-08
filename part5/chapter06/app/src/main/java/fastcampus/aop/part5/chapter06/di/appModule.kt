@@ -19,6 +19,7 @@ import fastcampus.aop.part5.chapter06.presentation.trackinghistory.TrackingHisto
 import fastcampus.aop.part5.chapter06.presentation.trackingitems.TrackingItemsContract
 import fastcampus.aop.part5.chapter06.presentation.trackingitems.TrackingItemsFragment
 import fastcampus.aop.part5.chapter06.presentation.trackingitems.TrackingItemsPresenter
+import fastcampus.aop.part5.chapter06.work.AppWorkFactory
 import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -67,8 +68,12 @@ val appModule = module {
     single<PreferenceManager> { SharedPreferenceManager(get()) }
 
     // Repository
+//    single<TrackingItemRepository> { TrackingItemRepositoryStub() }
     single<TrackingItemRepository> { TrackingItemRepositoryImpl(get(), get(), get()) }
     single<ShippingCompanyRepository> { ShippingCompanyRepositoryImpl(get(), get(), get(), get()) }
+
+    // Work
+    single { AppWorkFactory(get(), get()) }
 
     // Presentation
     scope<TrackingItemsFragment> {
