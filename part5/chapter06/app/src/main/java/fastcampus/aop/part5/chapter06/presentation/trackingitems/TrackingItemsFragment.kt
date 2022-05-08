@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import fastcampus.aop.part5.chapter06.R
@@ -14,6 +15,7 @@ import fastcampus.aop.part5.chapter06.databinding.FragmentTrackingItemsBinding
 import fastcampus.aop.part5.chapter06.extension.toGone
 import fastcampus.aop.part5.chapter06.extension.toInvisible
 import fastcampus.aop.part5.chapter06.extension.toVisible
+import fastcampus.aop.part5.chapter06.presentation.trackinghistory.TrackingHistoryFragmentArgs
 import org.koin.android.scope.ScopeFragment
 
 class TrackingItemsFragment : ScopeFragment(), TrackingItemsContract.View {
@@ -21,6 +23,8 @@ class TrackingItemsFragment : ScopeFragment(), TrackingItemsContract.View {
     override val presenter: TrackingItemsContract.Presenter by inject()
 
     private var binding: FragmentTrackingItemsBinding? = null
+
+    private val arguments : TrackingHistoryFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -86,6 +90,10 @@ class TrackingItemsFragment : ScopeFragment(), TrackingItemsContract.View {
         }
         binding?.addTrackingItemFloatingActionButton?.setOnClickListener { _ ->
             findNavController().navigate(R.id.to_add_tracking_item)
+        }
+        (binding?.recyclerView?.adapter as TrackingItemsAdapter)?.onClickItemListener = {item, information ->
+            findNavController()
+                .navigate(TrackingItemsFragmentDirections.toTrackingHistory(item, information))
         }
     }
 }

@@ -30,5 +30,15 @@
         android:id="@+id/tracking_history_dest"
         android:name="fastcampus.aop.part5.chapter06.presentation.trackinghistory.TrackingHistoryFragment"
         android:label="배송 상세"
-        tools:layout="@layout/fragment_tracking_history" />
+        tools:layout="@layout/fragment_tracking_history">
+
+        <argument
+            android:name="item"
+            app:argType="fastcampus.aop.part5.chapter06.data.entity.TrackingItem" />
+
+        <argument
+            android:name="information"
+            app:argType="fastcampus.aop.part5.chapter06.data.entity.TrackingInformation" />
+
+    </fragment>
 </navigation>
