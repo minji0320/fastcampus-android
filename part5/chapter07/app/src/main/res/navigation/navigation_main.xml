@@ -18,7 +18,7 @@
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/my_page_dest"
         android:name="fastcampus.aop.part5.chapter07.presentation.mypage.MyPageFragment"
         android:label="@string/title_my_page"
         tools:layout="@layout/fragment_my_page">
