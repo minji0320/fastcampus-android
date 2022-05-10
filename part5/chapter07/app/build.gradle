@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -53,6 +54,10 @@ dependencies {
     implementation 'org.koin:koin-android-scope:2.2.2'
     implementation 'org.koin:koin-android-ext:2.2.2'
     implementation 'org.koin:koin-androidx-fragment:2.2.2'
+
+    // Firebase
+    implementation platform('com.google.firebase:firebase-bom:27.1.0')
+    implementation 'com.google.firebase:firebase-firestore-ktx'
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

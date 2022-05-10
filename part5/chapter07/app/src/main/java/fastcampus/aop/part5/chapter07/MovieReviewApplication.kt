@@ -2,6 +2,7 @@ package fastcampus.aop.part5.chapter07
 
 import android.app.Application
 import fastcampus.aop.part5.chapter07.di.appModule
+import fastcampus.aop.part5.chapter07.utility.MovieDataGenerator
 import org.koin.android.BuildConfig
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -23,5 +24,7 @@ class MovieReviewApplication : Application() {
             androidContext(this@MovieReviewApplication)
             modules(appModule)
         }
+
+//        MovieDataGenerator().generate()
     }
 }
