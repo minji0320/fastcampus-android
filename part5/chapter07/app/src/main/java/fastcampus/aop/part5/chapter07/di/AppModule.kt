@@ -11,6 +11,7 @@ import fastcampus.aop.part5.chapter07.data.repository.MovieRepositoryImpl
 import fastcampus.aop.part5.chapter07.data.repository.ReviewRepository
 import fastcampus.aop.part5.chapter07.data.repository.ReviewRepositoryImpl
 import fastcampus.aop.part5.chapter07.domain.usecase.GetAllMoviesUseCase
+import fastcampus.aop.part5.chapter07.domain.usecase.GetAllReviewsUseCase
 import fastcampus.aop.part5.chapter07.domain.usecase.GetRandomFeaturedMovieUseCase
 import fastcampus.aop.part5.chapter07.presentation.home.HomeContract
 import fastcampus.aop.part5.chapter07.presentation.home.HomeFragment
@@ -34,6 +35,7 @@ val dataModule = module {
 
 val domainModule = module {
     factory { GetAllMoviesUseCase(get()) }
+    factory { GetAllReviewsUseCase(get()) }
     factory { GetRandomFeaturedMovieUseCase(get(), get()) }
 }
 
