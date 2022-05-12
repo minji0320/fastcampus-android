@@ -43,7 +43,7 @@ val dataModule = module {
 
 val domainModule = module {
     factory { GetAllMoviesUseCase(get()) }
-    factory { GetAllMovieReviewsUseCase(get()) }
+    factory { GetAllMovieReviewsUseCase(get(), get()) }
     factory { GetRandomFeaturedMovieUseCase(get(), get()) }
     factory { GetMyReviewedMoviesUseCase(get(), get(), get()) }
     factory { SubmitReviewUseCase(get(), get()) }
@@ -56,7 +56,7 @@ val presentationModule = module {
     }
     scope<MovieReviewsFragment> {
         scoped<MovieReviewsContract.Presenter> { (movie: Movie) ->
-            MovieReviewsPresenter(movie, getSource(), get())
+            MovieReviewsPresenter(movie, getSource(), get(), get(), get())
         }
     }
     scope<MyPageFragment> {
