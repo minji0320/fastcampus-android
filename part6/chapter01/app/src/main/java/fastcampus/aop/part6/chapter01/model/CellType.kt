@@ -2,5 +2,6 @@ package fastcampus.aop.part6.chapter01.model
 
 enum class CellType {
 
-    EMPTY_CELL
+    EMPTY_CELL,
+    RESTAURANT_CELL
 }

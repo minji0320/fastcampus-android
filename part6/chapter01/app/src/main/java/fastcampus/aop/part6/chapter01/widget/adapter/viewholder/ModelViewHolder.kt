@@ -9,13 +9,13 @@ import fastcampus.aop.part6.chapter01.widget.adapter.listener.AdapterListener
 
 abstract class ModelViewHolder<M : Model>(
     binding: ViewBinding,
-    protected open val viewModel: BaseViewModel,
-    protected open val resourcesProvider: ResourcesProvider,
+    protected val viewModel: BaseViewModel,
+    protected val resourcesProvider: ResourcesProvider,
 ) : RecyclerView.ViewHolder(binding.root) {
 
     abstract fun reset()
 
-    open fun bindData(Model: M) {
+    open fun bindData(model: M) {
         reset()
     }
 

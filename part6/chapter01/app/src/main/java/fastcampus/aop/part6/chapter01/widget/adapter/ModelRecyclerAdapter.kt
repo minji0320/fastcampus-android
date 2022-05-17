@@ -22,10 +22,12 @@ class ModelRecyclerAdapter<M : Model, VM : BaseViewModel>(
     override fun getItemViewType(position: Int): Int = modelList[position].type.ordinal
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ModelViewHolder<M> {
-        return ModelViewHolderMapper.map(parent,
+        return ModelViewHolderMapper.map(
+            parent,
             CellType.values()[viewType],
             viewModel,
-            resourcesProvider)
+            resourcesProvider
+        )
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -36,7 +38,7 @@ class ModelRecyclerAdapter<M : Model, VM : BaseViewModel>(
         }
     }
 
-    override fun submitList(list: MutableList<Model>?) {
+    override fun submitList(list: List<Model>?) {
         list?.let { modelList = it }
         super.submitList(list)
     }
