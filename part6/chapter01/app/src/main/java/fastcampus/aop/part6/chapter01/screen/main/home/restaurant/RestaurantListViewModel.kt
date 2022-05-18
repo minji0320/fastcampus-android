@@ -2,7 +2,7 @@ package fastcampus.aop.part6.chapter01.screen.main.home.restaurant
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import fastcampus.aop.part6.chapter01.data.repository.RestaurantRepository
+import fastcampus.aop.part6.chapter01.data.repository.restaurant.RestaurantRepository
 import fastcampus.aop.part6.chapter01.model.restaurant.RestaurantModel
 import fastcampus.aop.part6.chapter01.screen.base.BaseViewModel
 import kotlinx.coroutines.Job

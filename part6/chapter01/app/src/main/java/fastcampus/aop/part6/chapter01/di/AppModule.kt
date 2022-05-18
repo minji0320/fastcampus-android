@@ -1,7 +1,9 @@
 package fastcampus.aop.part6.chapter01.di
 
-import fastcampus.aop.part6.chapter01.data.repository.DefaultRestaurantRepository
-import fastcampus.aop.part6.chapter01.data.repository.RestaurantRepository
+import fastcampus.aop.part6.chapter01.data.repository.map.DefaultMapRepository
+import fastcampus.aop.part6.chapter01.data.repository.map.MapRepository
+import fastcampus.aop.part6.chapter01.data.repository.restaurant.DefaultRestaurantRepository
+import fastcampus.aop.part6.chapter01.data.repository.restaurant.RestaurantRepository
 import fastcampus.aop.part6.chapter01.screen.main.home.HomeViewModel
 import fastcampus.aop.part6.chapter01.screen.main.home.restaurant.RestaurantCategory
 import fastcampus.aop.part6.chapter01.screen.main.home.restaurant.RestaurantListViewModel
@@ -16,7 +18,7 @@ import org.koin.dsl.module
 val appModule = module {
 
     // ViewModel
-    viewModel { HomeViewModel() }
+    viewModel { HomeViewModel(get()) }
     viewModel { MyViewModel() }
     viewModel { (restaurantCategory: RestaurantCategory) ->
         RestaurantListViewModel(restaurantCategory, get())
@@ -24,9 +26,13 @@ val appModule = module {
 
     // Repository
     single<RestaurantRepository> { DefaultRestaurantRepository(get(), get()) }
+    single<MapRepository> { DefaultMapRepository(get(), get()) }
 
     // Retrofit
-    single { provideRetrofit() }
+    single { provideMapRetrofit() }
+
+    // ApiService
+    single { provideMapApiService(get()) }
 
     // ResourceProvider
     single<ResourcesProvider> { DefaultResourcesProvider(androidContext()) }
