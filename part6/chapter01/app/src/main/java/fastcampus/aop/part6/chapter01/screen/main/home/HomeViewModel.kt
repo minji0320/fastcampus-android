@@ -28,4 +28,17 @@ class HomeViewModel(
         }
     }
 
+    fun getMapSearchInfo(): MapSearchInfoEntity? {
+        when (val data = homeStateLiveData.value) {
+            is HomeState.Success -> {
+                return data.mapSearchInfo
+            }
+        }
+        return null
+    }
+
+    companion object {
+        const val MY_LOCATION_KEY = "MyLocation"
+    }
+
 }
