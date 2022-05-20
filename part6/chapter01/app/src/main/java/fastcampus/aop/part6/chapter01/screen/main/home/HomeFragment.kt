@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -129,6 +128,14 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 binding.filterScrollView.isVisible = true
                 binding.viewPager.isVisible = true
                 initViewPager(it.mapSearchInfo.locationLatLng)
+
+                if (!it.isLocationSame) {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.please_check_your_current_location),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
             is HomeState.Error -> {
                 binding.locationLoading.isGone = true
@@ -145,18 +152,26 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         val restaurantCategories = RestaurantCategory.values()
         if (::viewPagerAdapter.isInitialized.not()) {
             val restaurantListFragmentList = restaurantCategories.map {
-                RestaurantListFragment.newInstance(it)
+                RestaurantListFragment.newInstance(it, locationLatLng)
             }
             viewPagerAdapter = RestaurantListFragmentPagerAdapter(
                 this@HomeFragment,
-                restaurantListFragmentList
+                restaurantListFragmentList,
+                locationLatLng
             )
             viewPager.adapter = viewPagerAdapter
+            viewPager.offscreenPageLimit = restaurantCategories.size
+            TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+                tab.setText(restaurantCategories[position].categoryNameId)
+            }.attach()
         }
-        viewPager.offscreenPageLimit = restaurantCategories.size
-        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            tab.setText(restaurantCategories[position].categoryNameId)
-        }.attach()
+
+        if (locationLatLng != viewPagerAdapter.locationLatLngEntity) {
+            viewPagerAdapter.locationLatLngEntity = locationLatLng
+            viewPagerAdapter.fragmentList.forEach {
+                it.viewModel.setLocationLatLng(locationLatLng)
+            }
+        }
     }
 
     private fun removeLocationListener() {
