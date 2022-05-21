@@ -19,6 +19,7 @@ import fastcampus.aop.part6.chapter01.databinding.FragmentHomeBinding
 import fastcampus.aop.part6.chapter01.screen.base.BaseFragment
 import fastcampus.aop.part6.chapter01.screen.main.home.restaurant.RestaurantCategory
 import fastcampus.aop.part6.chapter01.screen.main.home.restaurant.RestaurantListFragment
+import fastcampus.aop.part6.chapter01.screen.main.home.restaurant.RestaurantOrder
 import fastcampus.aop.part6.chapter01.screen.mylocation.MyLocationActivity
 import fastcampus.aop.part6.chapter01.widget.adapter.RestaurantListFragmentPagerAdapter
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -77,6 +78,35 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     MyLocationActivity.newIntent(requireContext(), mapInfo)
                 )
             }
+        }
+        orderChipGroup.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.chipDefault -> {
+                    chipInitialize.isGone = true
+                    changeRestaurantOrder(RestaurantOrder.DEFAULT)
+                }
+                R.id.chipInitialize -> {
+                    chipDefault.isChecked = true
+                }
+                R.id.chipFastDelivery -> {
+                    chipInitialize.isVisible = true
+                    changeRestaurantOrder(RestaurantOrder.FAST_DELIVERY)
+                }
+                R.id.chipLowDeliveryTip -> {
+                    chipInitialize.isVisible = true
+                    changeRestaurantOrder(RestaurantOrder.LOW_DELIVERY_TIP)
+                }
+                R.id.chipTopRate -> {
+                    chipInitialize.isVisible = true
+                    changeRestaurantOrder(RestaurantOrder.TOP_RATE)
+                }
+            }
+        }
+    }
+
+    private fun changeRestaurantOrder(order: RestaurantOrder) {
+        viewPagerAdapter.fragmentList.forEach {
+            it.viewModel.setRestaurantOrder(order)
         }
     }
 
@@ -151,6 +181,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     private fun initViewPager(locationLatLng: LocationLatLngEntity) = with(binding) {
         val restaurantCategories = RestaurantCategory.values()
         if (::viewPagerAdapter.isInitialized.not()) {
+            orderChipGroup.isVisible = true
             val restaurantListFragmentList = restaurantCategories.map {
                 RestaurantListFragment.newInstance(it, locationLatLng)
             }
