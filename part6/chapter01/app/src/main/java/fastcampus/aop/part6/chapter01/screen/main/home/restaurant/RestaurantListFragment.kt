@@ -6,6 +6,7 @@ import fastcampus.aop.part6.chapter01.data.entity.LocationLatLngEntity
 import fastcampus.aop.part6.chapter01.databinding.FragmentRestaurantListBinding
 import fastcampus.aop.part6.chapter01.model.restaurant.RestaurantModel
 import fastcampus.aop.part6.chapter01.screen.base.BaseFragment
+import fastcampus.aop.part6.chapter01.screen.main.home.restaurant.detail.RestaurantDetailActivity
 import fastcampus.aop.part6.chapter01.util.provider.ResourcesProvider
 import fastcampus.aop.part6.chapter01.widget.adapter.ModelRecyclerAdapter
 import fastcampus.aop.part6.chapter01.widget.adapter.listener.restaurant.RestaurantListListener
@@ -36,7 +37,12 @@ class RestaurantListFragment :
             resourcesProvider,
             adapterListener = object : RestaurantListListener {
                 override fun onClickItem(model: RestaurantModel) {
-                    Toast.makeText(requireContext(), "$model", Toast.LENGTH_SHORT).show()
+                    startActivity(
+                        RestaurantDetailActivity.newIntent(
+                            requireContext(),
+                            model.toEntity()
+                        )
+                    )
                 }
             }
         )
@@ -56,6 +62,7 @@ class RestaurantListFragment :
     companion object {
         const val RESTAURANT_CATEGORY_KEY = "restaurantCategory"
         const val LOCATION_KEY = "location"
+        const val RESTAURANT_KEY = "restaurant"
 
         fun newInstance(
             restaurantCategory: RestaurantCategory,
