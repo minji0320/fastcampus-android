@@ -58,7 +58,7 @@ class RestaurantDetailActivity :
             }
         }
         likeButton.setOnClickListener {
-
+            viewModel.toggleLikedRestaurant()
         }
         shareButton.setOnClickListener {
 

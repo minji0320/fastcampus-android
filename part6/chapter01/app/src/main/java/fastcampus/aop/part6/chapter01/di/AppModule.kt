@@ -34,12 +34,12 @@ val appModule = module {
     viewModel { (mapSearchInfoEntity: MapSearchInfoEntity) ->
         MyLocationViewModel(mapSearchInfoEntity, get(), get())
     }
-    viewModel { (restaurantEntity: RestaurantEntity) -> RestaurantDetailViewModel(restaurantEntity) }
+    viewModel { (restaurantEntity: RestaurantEntity) -> RestaurantDetailViewModel(restaurantEntity, get()) }
 
     // Repository
     single<RestaurantRepository> { DefaultRestaurantRepository(get(), get(), get()) }
     single<MapRepository> { DefaultMapRepository(get(), get()) }
-    single<UserRepository> { DefaultUserRepository(get(), get()) }
+    single<UserRepository> { DefaultUserRepository(get(), get(), get()) }
 
     // Retrofit
     single { provideMapRetrofit() }
@@ -50,6 +50,7 @@ val appModule = module {
     // DB
     single { provideDB(androidApplication()) }
     single { provideLocationDao(get()) }
+    single { provideRestaurantDao(get()) }
 
     // ResourceProvider
     single<ResourcesProvider> { DefaultResourcesProvider(androidContext()) }
