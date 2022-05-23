@@ -52,6 +52,10 @@ class RestaurantDetailActivity :
         toolbar.setNavigationOnClickListener { finish() }
 
         callButton.setOnClickListener {
+            viewModel.getRestaurantTelNumber()?.let { telNumber ->
+                val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$telNumber"))
+                startActivity(intent)
+            }
         }
         likeButton.setOnClickListener {
 
