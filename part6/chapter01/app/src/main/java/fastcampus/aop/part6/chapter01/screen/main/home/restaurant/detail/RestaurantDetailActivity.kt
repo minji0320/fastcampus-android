@@ -1,9 +1,11 @@
 package fastcampus.aop.part6.chapter01.screen.main.home.restaurant.detail
 
+import android.content.ClipDescription.MIMETYPE_TEXT_PLAIN
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.core.content.ContextCompat
+import androidx.core.content.MimeTypeFilter
 import androidx.core.view.isGone
 import com.google.android.material.appbar.AppBarLayout
 import fastcampus.aop.part6.chapter01.R
@@ -61,7 +63,20 @@ class RestaurantDetailActivity :
             viewModel.toggleLikedRestaurant()
         }
         shareButton.setOnClickListener {
-
+            viewModel.getRestaurantInfo()?.let { restaurantInfo ->
+                val intent = Intent(Intent.ACTION_SEND).apply {
+                    // text/plain
+                    type = MIMETYPE_TEXT_PLAIN
+                    putExtra(
+                        Intent.EXTRA_TEXT,
+                        "맛있는 음식점 : ${restaurantInfo.restaurantTitle}" +
+                                "\n평점 : ${restaurantInfo.grade}" +
+                                "\n연락처 : ${restaurantInfo.restaurantTelNumber}"
+                    )
+                    Intent.createChooser(this, "친구에게 공유하기")
+                }
+                startActivity(intent)
+            }
         }
     }
 
