@@ -3,6 +3,7 @@ package fastcampus.aop.part6.chapter01.screen.main.home.restaurant.detail
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import fastcampus.aop.part6.chapter01.data.entity.RestaurantEntity
+import fastcampus.aop.part6.chapter01.data.repository.restaurant.food.RestaurantFoodRepository
 import fastcampus.aop.part6.chapter01.data.repository.user.UserRepository
 import fastcampus.aop.part6.chapter01.screen.base.BaseViewModel
 import kotlinx.coroutines.Job
@@ -10,6 +11,7 @@ import kotlinx.coroutines.launch
 
 class RestaurantDetailViewModel(
     private val restaurantEntity: RestaurantEntity,
+    private val restaurantFoodRepository: RestaurantFoodRepository,
     private val userRepository: UserRepository,
 ) : BaseViewModel() {
 
@@ -22,10 +24,12 @@ class RestaurantDetailViewModel(
         )
 
         restaurantDetailStateLiveData.value = RestaurantDetailState.Loading
+        val foods = restaurantFoodRepository.getFoods(restaurantEntity.restaurantInfoId)
         val isLiked =
             userRepository.getUserLikedRestaurant(restaurantEntity.restaurantTitle) != null
         restaurantDetailStateLiveData.value = RestaurantDetailState.Success(
             restaurantEntity = restaurantEntity,
+            restaurantFoodList = foods,
             isLiked = isLiked
         )
     }

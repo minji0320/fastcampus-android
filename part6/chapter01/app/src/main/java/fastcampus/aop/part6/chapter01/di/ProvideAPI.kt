@@ -1,6 +1,7 @@
 package fastcampus.aop.part6.chapter01.di
 
 import fastcampus.aop.part6.chapter01.BuildConfig
+import fastcampus.aop.part6.chapter01.data.network.FoodApiService
 import fastcampus.aop.part6.chapter01.data.network.MapApiService
 import fastcampus.aop.part6.chapter01.data.url.Url
 import okhttp3.OkHttpClient
@@ -14,11 +15,29 @@ fun provideMapApiService(retrofit: Retrofit): MapApiService {
     return retrofit.create(MapApiService::class.java)
 }
 
-fun provideMapRetrofit(): Retrofit {
+fun provideFoodApiService(retrofit: Retrofit): FoodApiService {
+    return retrofit.create(FoodApiService::class.java)
+}
+
+fun provideMapRetrofit(
+    gsonConverterFactory: GsonConverterFactory,
+    okHttpClient: OkHttpClient,
+): Retrofit {
     return Retrofit.Builder()
         .baseUrl(Url.TMAP_URL)
-        .addConverterFactory(provideGsonConvertFactory())
-        .client(buildOkHttpClient())
+        .addConverterFactory(gsonConverterFactory)
+        .client(okHttpClient)
+        .build()
+}
+
+fun provideFoodRetrofit(
+    gsonConverterFactory: GsonConverterFactory,
+    okHttpClient: OkHttpClient,
+): Retrofit {
+    return Retrofit.Builder()
+        .baseUrl(Url.FOOD_URL)
+        .addConverterFactory(gsonConverterFactory)
+        .client(okHttpClient)
         .build()
 }
 

@@ -7,12 +7,15 @@ import fastcampus.aop.part6.chapter01.data.repository.map.DefaultMapRepository
 import fastcampus.aop.part6.chapter01.data.repository.map.MapRepository
 import fastcampus.aop.part6.chapter01.data.repository.restaurant.DefaultRestaurantRepository
 import fastcampus.aop.part6.chapter01.data.repository.restaurant.RestaurantRepository
+import fastcampus.aop.part6.chapter01.data.repository.restaurant.food.DefaultRestaurantFoodRepository
+import fastcampus.aop.part6.chapter01.data.repository.restaurant.food.RestaurantFoodRepository
 import fastcampus.aop.part6.chapter01.data.repository.user.DefaultUserRepository
 import fastcampus.aop.part6.chapter01.data.repository.user.UserRepository
 import fastcampus.aop.part6.chapter01.screen.main.home.HomeViewModel
 import fastcampus.aop.part6.chapter01.screen.main.home.restaurant.RestaurantCategory
 import fastcampus.aop.part6.chapter01.screen.main.home.restaurant.RestaurantListViewModel
 import fastcampus.aop.part6.chapter01.screen.main.home.restaurant.detail.RestaurantDetailViewModel
+import fastcampus.aop.part6.chapter01.screen.main.home.restaurant.detail.menu.RestaurantMenuListViewModel
 import fastcampus.aop.part6.chapter01.screen.main.my.MyViewModel
 import fastcampus.aop.part6.chapter01.screen.mylocation.MyLocationViewModel
 import fastcampus.aop.part6.chapter01.util.provider.DefaultResourcesProvider
@@ -21,6 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val appModule = module {
@@ -34,18 +38,26 @@ val appModule = module {
     viewModel { (mapSearchInfoEntity: MapSearchInfoEntity) ->
         MyLocationViewModel(mapSearchInfoEntity, get(), get())
     }
-    viewModel { (restaurantEntity: RestaurantEntity) -> RestaurantDetailViewModel(restaurantEntity, get()) }
+    viewModel { (restaurantEntity: RestaurantEntity) ->
+        RestaurantDetailViewModel(restaurantEntity, get(), get())
+    }
+    viewModel { RestaurantMenuListViewModel() }
 
     // Repository
     single<RestaurantRepository> { DefaultRestaurantRepository(get(), get(), get()) }
     single<MapRepository> { DefaultMapRepository(get(), get()) }
     single<UserRepository> { DefaultUserRepository(get(), get(), get()) }
+    single<RestaurantFoodRepository> { DefaultRestaurantFoodRepository(get(), get()) }
 
     // Retrofit
-    single { provideMapRetrofit() }
+    single { provideGsonConvertFactory() }
+    single { buildOkHttpClient() }
+    single(named("map")) { provideMapRetrofit(get(), get()) }
+    single(named("food")) { provideFoodRetrofit(get(), get()) }
 
     // ApiService
-    single { provideMapApiService(get()) }
+    single { provideMapApiService(get(qualifier = named("map"))) }
+    single { provideFoodApiService(get(qualifier = named("food"))) }
 
     // DB
     single { provideDB(androidApplication()) }
