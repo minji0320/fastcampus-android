@@ -9,6 +9,7 @@ import fastcampus.aop.part6.chapter01.model.restaurant.food.FoodModel
 import fastcampus.aop.part6.chapter01.screen.base.BaseViewModel
 import fastcampus.aop.part6.chapter01.util.provider.ResourcesProvider
 import fastcampus.aop.part6.chapter01.widget.adapter.listener.AdapterListener
+import fastcampus.aop.part6.chapter01.widget.adapter.listener.restaurant.FoodMenuListListener
 import fastcampus.aop.part6.chapter01.widget.adapter.viewholder.ModelViewHolder
 
 class FoodMenuViewHolder(
@@ -31,7 +32,9 @@ class FoodMenuViewHolder(
         }
     }
 
-    override fun bindViews(model: FoodModel, adapterListener: AdapterListener) =
-        with(binding) {
+    override fun bindViews(model: FoodModel, adapterListener: AdapterListener) {
+        if (adapterListener is FoodMenuListListener) {
+            binding.root.setOnClickListener { adapterListener.onClickItem(model) }
         }
+    }
 }
