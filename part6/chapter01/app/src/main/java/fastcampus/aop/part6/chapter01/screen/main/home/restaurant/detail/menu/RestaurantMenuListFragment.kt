@@ -23,8 +23,7 @@ class RestaurantMenuListFragment :
         FragmentListBinding.inflate(layoutInflater)
 
     private val restaurantId by lazy {
-        arguments?.getLong(RestaurantReviewListFragment.RESTAURANT_ID_KEY,
-            -1)
+        arguments?.getLong(RestaurantReviewListFragment.RESTAURANT_TITLE_KEY, -1)
     }
     private val restaurantFoodList by lazy {
         arguments?.getParcelableArrayList<RestaurantFoodEntity>(FOOD_LIST_KEY)!!
@@ -67,7 +66,7 @@ class RestaurantMenuListFragment :
             restaurantDetailViewModel.notifyFoodMenuListInBasket(it)
         }
         viewModel.isClearNeedInBasketLiveData.observe(viewLifecycleOwner) { (isClearNeed, afterAction) ->
-            if(isClearNeed) {
+            if (isClearNeed) {
                 restaurantDetailViewModel.notifyClearNeedAlertInBasket(isClearNeed, afterAction)
             }
         }
