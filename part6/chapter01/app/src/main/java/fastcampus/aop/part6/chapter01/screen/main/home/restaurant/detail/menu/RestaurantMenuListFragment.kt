@@ -23,7 +23,7 @@ class RestaurantMenuListFragment :
         FragmentListBinding.inflate(layoutInflater)
 
     private val restaurantId by lazy {
-        arguments?.getLong(RestaurantReviewListFragment.RESTAURANT_TITLE_KEY, -1)
+        arguments?.getLong(RESTAURANT_ID_KEY, -1)
     }
     private val restaurantFoodList by lazy {
         arguments?.getParcelableArrayList<RestaurantFoodEntity>(FOOD_LIST_KEY)!!
