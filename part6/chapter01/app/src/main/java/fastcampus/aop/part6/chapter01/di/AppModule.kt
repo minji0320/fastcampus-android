@@ -4,6 +4,7 @@ import fastcampus.aop.part6.chapter01.data.entity.LocationLatLngEntity
 import fastcampus.aop.part6.chapter01.data.entity.MapSearchInfoEntity
 import fastcampus.aop.part6.chapter01.data.entity.RestaurantEntity
 import fastcampus.aop.part6.chapter01.data.entity.RestaurantFoodEntity
+import fastcampus.aop.part6.chapter01.data.preference.AppPreferenceManager
 import fastcampus.aop.part6.chapter01.data.repository.map.DefaultMapRepository
 import fastcampus.aop.part6.chapter01.data.repository.map.MapRepository
 import fastcampus.aop.part6.chapter01.data.repository.restaurant.DefaultRestaurantRepository
@@ -35,7 +36,7 @@ val appModule = module {
 
     // ViewModel
     viewModel { HomeViewModel(get(), get(), get()) }
-    viewModel { MyViewModel() }
+    viewModel { MyViewModel(get(), get()) }
     viewModel { (restaurantCategory: RestaurantCategory, locationLatLng: LocationLatLngEntity) ->
         RestaurantListViewModel(restaurantCategory, locationLatLng, get())
     }
@@ -75,6 +76,9 @@ val appModule = module {
 
     // ResourceProvider
     single<ResourcesProvider> { DefaultResourcesProvider(androidContext()) }
+
+    // PreferenceManager
+    single { AppPreferenceManager(androidContext()) }
 
     // Coroutines
     single { Dispatchers.IO }
