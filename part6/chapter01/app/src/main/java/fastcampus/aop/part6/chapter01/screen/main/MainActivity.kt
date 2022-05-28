@@ -8,7 +8,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import fastcampus.aop.part6.chapter01.R
 import fastcampus.aop.part6.chapter01.databinding.ActivityMainBinding
 import fastcampus.aop.part6.chapter01.screen.main.home.HomeFragment
+import fastcampus.aop.part6.chapter01.screen.main.like.RestaurantLikeListFragment
 import fastcampus.aop.part6.chapter01.screen.main.my.MyFragment
+import fastcampus.aop.part6.chapter01.util.event.MenuChangeEventBus
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -30,6 +34,11 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         return when (item.itemId) {
             R.id.menu_home -> {
                 showFragment(HomeFragment.newInstance(), HomeFragment.TAG)
+                true
+            }
+            R.id.menu_like -> {
+                showFragment(RestaurantLikeListFragment.newInstance(),
+                    RestaurantLikeListFragment.TAG)
                 true
             }
             R.id.menu_my -> {

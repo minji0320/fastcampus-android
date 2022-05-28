@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">aop-part6-chapter01</string>
-    <string name="home">홈</string>
-    <string name="my">My</string>
+    <string name="menu_home">홈</string>
+    <string name="menu_like">찜</string>
+    <string name="menu_my">My</string>
     <string name="fast_delivery">배달 빠른 순</string>
     <string name="low_delivery_tip">배달팁 낮은 순</string>
     <string name="default_order">기본 순</string>
@@ -41,5 +42,7 @@
     <string name="logout">로그아웃</string>
     <string name="empty_orders_text">주문 리스트가 존재하지 않습니다.</string>
     <string name="google_login_required">구글 로그인이 필요합니다.</string>
+    <string name="restaurant_like_list">찜 리스트</string>
+    <string name="empty_like_restaurant_list">찜한 내역이 존재하지 않습니다.</string>
 
 </resources>
