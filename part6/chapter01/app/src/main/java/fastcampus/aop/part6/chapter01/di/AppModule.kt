@@ -24,6 +24,7 @@ import fastcampus.aop.part6.chapter01.screen.main.home.restaurant.detail.review.
 import fastcampus.aop.part6.chapter01.screen.main.like.RestaurantLikeListViewModel
 import fastcampus.aop.part6.chapter01.screen.main.my.MyViewModel
 import fastcampus.aop.part6.chapter01.screen.mylocation.MyLocationViewModel
+import fastcampus.aop.part6.chapter01.util.event.MenuChangeEventBus
 import fastcampus.aop.part6.chapter01.util.provider.DefaultResourcesProvider
 import fastcampus.aop.part6.chapter01.util.provider.ResourcesProvider
 import kotlinx.coroutines.Dispatchers
@@ -85,5 +86,8 @@ val appModule = module {
     // Coroutines
     single { Dispatchers.IO }
     single { Dispatchers.Main }
+
+    // MenuChangeEventBus
+    single { MenuChangeEventBus() }
 
 }

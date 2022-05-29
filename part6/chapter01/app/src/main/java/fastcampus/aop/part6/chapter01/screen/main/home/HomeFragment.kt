@@ -3,6 +3,7 @@ package fastcampus.aop.part6.chapter01.screen.main.home
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.location.Location
 import android.location.LocationListener
@@ -12,16 +13,21 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.auth.FirebaseAuth
 import fastcampus.aop.part6.chapter01.R
 import fastcampus.aop.part6.chapter01.data.entity.LocationLatLngEntity
 import fastcampus.aop.part6.chapter01.data.entity.MapSearchInfoEntity
 import fastcampus.aop.part6.chapter01.databinding.FragmentHomeBinding
 import fastcampus.aop.part6.chapter01.screen.base.BaseFragment
+import fastcampus.aop.part6.chapter01.screen.main.MainActivity
+import fastcampus.aop.part6.chapter01.screen.main.MainTabMenu
 import fastcampus.aop.part6.chapter01.screen.main.home.restaurant.RestaurantCategory
 import fastcampus.aop.part6.chapter01.screen.main.home.restaurant.RestaurantListFragment
 import fastcampus.aop.part6.chapter01.screen.main.home.restaurant.RestaurantOrder
 import fastcampus.aop.part6.chapter01.screen.mylocation.MyLocationActivity
+import fastcampus.aop.part6.chapter01.util.event.MenuChangeEventBus
 import fastcampus.aop.part6.chapter01.widget.adapter.RestaurantListFragmentPagerAdapter
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
@@ -36,6 +42,8 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
     override fun getViewBinding(): FragmentHomeBinding =
         FragmentHomeBinding.inflate(layoutInflater)
+
+    private val firebaseAuth by lazy { FirebaseAuth.getInstance() }
 
     private val changeLocationLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -188,7 +196,13 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 binding.basketButtonContainer.isVisible = true
                 binding.basketCountTextView.text = getString(R.string.basket_count, it.size)
                 binding.basketButton.setOnClickListener {
-                    // TODO 주문하기 화면으로 이동 or 로그인
+                    if (firebaseAuth.currentUser == null) {
+                        alertLoginNeed {
+                            (requireActivity() as MainActivity).goToTab(MainTabMenu.MY)
+                        }
+                    } else {
+
+                    }
                 }
             } else {
                 binding.basketButtonContainer.isGone = true
@@ -222,6 +236,21 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 it.viewModel.setLocationLatLng(locationLatLng)
             }
         }
+    }
+
+    private fun alertLoginNeed(afterAction: () -> Unit) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("로그인이 필요합니다.")
+            .setMessage("주문하려면 로그인이 필요합니다. My탭으로 이동하시겠습니까?")
+            .setPositiveButton("이동") { dialog, _ ->
+                afterAction()
+                dialog.dismiss()
+            }
+            .setNegativeButton("취소") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
     }
 
     private fun removeLocationListener() {

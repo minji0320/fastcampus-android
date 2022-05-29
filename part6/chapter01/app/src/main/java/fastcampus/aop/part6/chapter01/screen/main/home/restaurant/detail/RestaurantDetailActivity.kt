@@ -8,8 +8,10 @@ import android.net.Uri
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.auth.FirebaseAuth
 import fastcampus.aop.part6.chapter01.R
 import fastcampus.aop.part6.chapter01.data.entity.RestaurantEntity
 import fastcampus.aop.part6.chapter01.data.entity.RestaurantFoodEntity
@@ -17,10 +19,15 @@ import fastcampus.aop.part6.chapter01.databinding.ActivityRestaurantDetailBindin
 import fastcampus.aop.part6.chapter01.extensions.fromDpToPx
 import fastcampus.aop.part6.chapter01.extensions.load
 import fastcampus.aop.part6.chapter01.screen.base.BaseActivity
+import fastcampus.aop.part6.chapter01.screen.main.MainActivity
+import fastcampus.aop.part6.chapter01.screen.main.MainTabMenu
 import fastcampus.aop.part6.chapter01.screen.main.home.restaurant.RestaurantListFragment
 import fastcampus.aop.part6.chapter01.screen.main.home.restaurant.detail.menu.RestaurantMenuListFragment
 import fastcampus.aop.part6.chapter01.screen.main.home.restaurant.detail.review.RestaurantReviewListFragment
+import fastcampus.aop.part6.chapter01.util.event.MenuChangeEventBus
 import fastcampus.aop.part6.chapter01.widget.adapter.RestaurantDetailListFragmentPagerAdapter
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.math.abs
@@ -36,6 +43,10 @@ class RestaurantDetailActivity :
             intent.getParcelableExtra<RestaurantEntity>(RestaurantListFragment.RESTAURANT_KEY)
         )
     }
+
+    private val firebaseAuth by lazy { FirebaseAuth.getInstance() }
+
+    private val menuChangeEventBus by inject<MenuChangeEventBus>()
 
     private lateinit var viewPagerAdapter: RestaurantDetailListFragmentPagerAdapter
 
@@ -136,7 +147,9 @@ class RestaurantDetailActivity :
         )
 
         if (!::viewPagerAdapter.isInitialized) {
-            initViewPager(state.restaurantEntity.restaurantInfoId, state.restaurantFoodList, state.restaurantEntity.restaurantTitle)
+            initViewPager(state.restaurantEntity.restaurantInfoId,
+                state.restaurantFoodList,
+                state.restaurantEntity.restaurantTitle)
         }
 
         notifyBasketCount(state.foodMenuListInBasket)
@@ -177,9 +190,33 @@ class RestaurantDetailActivity :
             }
 
             basketButton.setOnClickListener {
-                // TODO 주문하기 화면으로 이동 or 로그인
+                if (firebaseAuth.currentUser == null) {
+                    alertLoginNeed {
+                        lifecycleScope.launch {
+                            menuChangeEventBus.changeMenu(MainTabMenu.MY)
+                            finish()
+                        }
+                    }
+                } else {
+
+                }
             }
         }
+
+    private fun alertLoginNeed(afterAction: () -> Unit) {
+        AlertDialog.Builder(this)
+            .setTitle("로그인이 필요합니다.")
+            .setMessage("주문하려면 로그인이 필요합니다. My탭으로 이동하시겠습니까?")
+            .setPositiveButton("이동") { dialog, _ ->
+                afterAction()
+                dialog.dismiss()
+            }
+            .setNegativeButton("취소") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+    }
 
     private fun alertClearNeedInBasket(afterAction: () -> Unit) {
         AlertDialog.Builder(this)
