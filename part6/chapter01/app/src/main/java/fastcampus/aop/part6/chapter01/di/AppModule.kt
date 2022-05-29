@@ -24,6 +24,7 @@ import fastcampus.aop.part6.chapter01.screen.main.home.restaurant.detail.review.
 import fastcampus.aop.part6.chapter01.screen.main.like.RestaurantLikeListViewModel
 import fastcampus.aop.part6.chapter01.screen.main.my.MyViewModel
 import fastcampus.aop.part6.chapter01.screen.mylocation.MyLocationViewModel
+import fastcampus.aop.part6.chapter01.screen.order.OrderMenuListViewModel
 import fastcampus.aop.part6.chapter01.util.event.MenuChangeEventBus
 import fastcampus.aop.part6.chapter01.util.provider.DefaultResourcesProvider
 import fastcampus.aop.part6.chapter01.util.provider.ResourcesProvider
@@ -53,6 +54,7 @@ val appModule = module {
         RestaurantMenuListViewModel(restaurantId, foodEntityList, get())
     }
     viewModel { (restaurantTitle: String) -> RestaurantReviewListViewModel(restaurantTitle, get()) }
+    viewModel { OrderMenuListViewModel(get()) }
 
     // Repository
     single<RestaurantRepository> { DefaultRestaurantRepository(get(), get(), get()) }

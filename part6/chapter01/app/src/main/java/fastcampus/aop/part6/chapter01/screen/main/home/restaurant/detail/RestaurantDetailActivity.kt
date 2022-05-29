@@ -24,6 +24,7 @@ import fastcampus.aop.part6.chapter01.screen.main.MainTabMenu
 import fastcampus.aop.part6.chapter01.screen.main.home.restaurant.RestaurantListFragment
 import fastcampus.aop.part6.chapter01.screen.main.home.restaurant.detail.menu.RestaurantMenuListFragment
 import fastcampus.aop.part6.chapter01.screen.main.home.restaurant.detail.review.RestaurantReviewListFragment
+import fastcampus.aop.part6.chapter01.screen.order.OrderMenuListActivity
 import fastcampus.aop.part6.chapter01.util.event.MenuChangeEventBus
 import fastcampus.aop.part6.chapter01.widget.adapter.RestaurantDetailListFragmentPagerAdapter
 import kotlinx.coroutines.launch
@@ -198,7 +199,9 @@ class RestaurantDetailActivity :
                         }
                     }
                 } else {
-
+                    startActivity(
+                        OrderMenuListActivity.newIntent(this@RestaurantDetailActivity)
+                    )
                 }
             }
         }

@@ -25,6 +25,7 @@ import fastcampus.aop.part6.chapter01.screen.main.home.restaurant.RestaurantCate
 import fastcampus.aop.part6.chapter01.screen.main.home.restaurant.RestaurantListFragment
 import fastcampus.aop.part6.chapter01.screen.main.home.restaurant.RestaurantOrder
 import fastcampus.aop.part6.chapter01.screen.mylocation.MyLocationActivity
+import fastcampus.aop.part6.chapter01.screen.order.OrderMenuListActivity
 import fastcampus.aop.part6.chapter01.util.event.MenuChangeEventBus
 import fastcampus.aop.part6.chapter01.widget.adapter.RestaurantListFragmentPagerAdapter
 import org.koin.android.ext.android.inject
@@ -201,7 +202,9 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                             (requireActivity() as MainActivity).goToTab(MainTabMenu.MY)
                         }
                     } else {
-
+                        startActivity(
+                            OrderMenuListActivity.newIntent(requireContext())
+                        )
                     }
                 }
             } else {

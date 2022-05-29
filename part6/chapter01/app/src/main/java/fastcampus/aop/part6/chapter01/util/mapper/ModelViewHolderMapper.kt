@@ -10,6 +10,7 @@ import fastcampus.aop.part6.chapter01.util.provider.ResourcesProvider
 import fastcampus.aop.part6.chapter01.widget.adapter.viewholder.EmptyViewHolder
 import fastcampus.aop.part6.chapter01.widget.adapter.viewholder.ModelViewHolder
 import fastcampus.aop.part6.chapter01.widget.adapter.viewholder.food.FoodMenuViewHolder
+import fastcampus.aop.part6.chapter01.widget.adapter.viewholder.order.OrderMenuViewHolder
 import fastcampus.aop.part6.chapter01.widget.adapter.viewholder.restaurant.LikeRestaurantViewHolder
 import fastcampus.aop.part6.chapter01.widget.adapter.viewholder.restaurant.RestaurantViewHolder
 import fastcampus.aop.part6.chapter01.widget.adapter.viewholder.review.RestaurantReviewViewHolder
@@ -47,6 +48,11 @@ object ModelViewHolderMapper {
             )
             CellType.REVIEW_CELL -> RestaurantReviewViewHolder(
                 ViewholderRestaurantReviewBinding.inflate(inflater, parent, false),
+                viewModel,
+                resourcesProvider
+            )
+            CellType.ORDER_FOOD_CELL -> OrderMenuViewHolder(
+                ViewholderOrderMenuBinding.inflate(inflater, parent, false),
                 viewModel,
                 resourcesProvider
             )
