@@ -1,5 +1,7 @@
 package fastcampus.aop.part6.chapter01.di
 
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import fastcampus.aop.part6.chapter01.data.entity.LocationLatLngEntity
 import fastcampus.aop.part6.chapter01.data.entity.MapSearchInfoEntity
 import fastcampus.aop.part6.chapter01.data.entity.RestaurantEntity
@@ -7,6 +9,8 @@ import fastcampus.aop.part6.chapter01.data.entity.RestaurantFoodEntity
 import fastcampus.aop.part6.chapter01.data.preference.AppPreferenceManager
 import fastcampus.aop.part6.chapter01.data.repository.map.DefaultMapRepository
 import fastcampus.aop.part6.chapter01.data.repository.map.MapRepository
+import fastcampus.aop.part6.chapter01.data.repository.order.DefaultOrderRepository
+import fastcampus.aop.part6.chapter01.data.repository.order.OrderRepository
 import fastcampus.aop.part6.chapter01.data.repository.restaurant.DefaultRestaurantRepository
 import fastcampus.aop.part6.chapter01.data.repository.restaurant.RestaurantRepository
 import fastcampus.aop.part6.chapter01.data.repository.restaurant.food.DefaultRestaurantFoodRepository
@@ -54,7 +58,7 @@ val appModule = module {
         RestaurantMenuListViewModel(restaurantId, foodEntityList, get())
     }
     viewModel { (restaurantTitle: String) -> RestaurantReviewListViewModel(restaurantTitle, get()) }
-    viewModel { OrderMenuListViewModel(get()) }
+    viewModel { OrderMenuListViewModel(get(), get()) }
 
     // Repository
     single<RestaurantRepository> { DefaultRestaurantRepository(get(), get(), get()) }
@@ -62,6 +66,7 @@ val appModule = module {
     single<UserRepository> { DefaultUserRepository(get(), get(), get()) }
     single<RestaurantFoodRepository> { DefaultRestaurantFoodRepository(get(), get(), get()) }
     single<RestaurantReviewRepository> { DefaultRestaurantReviewRepository(get()) }
+    single<OrderRepository> { DefaultOrderRepository(get(), get()) }
 
     // Retrofit
     single { provideGsonConvertFactory() }
@@ -91,5 +96,8 @@ val appModule = module {
 
     // MenuChangeEventBus
     single { MenuChangeEventBus() }
+
+    // Firestore
+    single { Firebase.firestore }
 
 }

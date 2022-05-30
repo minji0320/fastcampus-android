@@ -55,10 +55,10 @@ class OrderMenuListActivity : BaseActivity<OrderMenuListViewModel, ActivityOrder
                 handleSuccess(it)
             }
             is OrderMenuState.Order -> {
-
+                handleOrderState()
             }
             is OrderMenuState.Error -> {
-
+                handleErrorState(it)
             }
             else -> Unit
         }
@@ -72,12 +72,22 @@ class OrderMenuListActivity : BaseActivity<OrderMenuListViewModel, ActivityOrder
         progressBar.isGone = true
         adapter.submitList(state.restaurantFoodModelList)
         val menuOrderIsEmpty = state.restaurantFoodModelList.isNullOrEmpty()
-        confirmButton.isEnabled = menuOrderIsEmpty
+        confirmButton.isEnabled = menuOrderIsEmpty.not()
         if (menuOrderIsEmpty) {
             Toast.makeText(this@OrderMenuListActivity, "주문 메뉴가 없어 화면을 종료합니다.", Toast.LENGTH_SHORT)
                 .show()
             finish()
         }
+    }
+
+    private fun handleOrderState() {
+        Toast.makeText(this, "성공적으로 주문을 완료하였습니다.", Toast.LENGTH_SHORT).show()
+        finish()
+    }
+
+    private fun handleErrorState(state: OrderMenuState.Error) {
+        Toast.makeText(this, getString(state.messageId, state.e), Toast.LENGTH_SHORT).show()
+        finish()
     }
 
     companion object {

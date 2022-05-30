@@ -52,6 +52,7 @@
         app:layout_constraintEnd_toStartOf="@id/foodImage"
         app:layout_constraintStart_toStartOf="@id/foodTitleText"
         app:layout_constraintTop_toBottomOf="@id/foodTitleText"
+        android:minLines="5"
         tools:text="메뉴 설명\n메뉴 설명\n메뉴 설명\n메뉴 설명\n메뉴 설명\n" />
 
     <TextView
