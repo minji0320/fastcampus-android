@@ -3,11 +3,13 @@ package fastcampus.aop.part6.chapter01.screen.main.my
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseUser
+import fastcampus.aop.part6.chapter01.R
 import fastcampus.aop.part6.chapter01.data.entity.OrderEntity
 import fastcampus.aop.part6.chapter01.data.preference.AppPreferenceManager
 import fastcampus.aop.part6.chapter01.data.repository.order.DefaultOrderRepository
 import fastcampus.aop.part6.chapter01.data.repository.order.OrderRepository
 import fastcampus.aop.part6.chapter01.data.repository.user.UserRepository
+import fastcampus.aop.part6.chapter01.model.restaurant.order.OrderModel
 import fastcampus.aop.part6.chapter01.screen.base.BaseViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
@@ -47,7 +49,21 @@ class MyViewModel(
                     myStateLiveData.value = MyState.Success.Registered(
                         userName = user.displayName ?: "익명",
                         profileImageUri = user.photoUrl,
-                        orderList = orderList
+                        orderList = orderList.map {
+                            OrderModel(
+                                id = it.hashCode().toLong(),
+                                orderId = it.id,
+                                userId = it.userId,
+                                restaurantId = it.restaurantId,
+                                foodMenuList = it.foodMenuList
+                            )
+                        }
+                    )
+                }
+                is DefaultOrderRepository.Result.Error -> {
+                    myStateLiveData.value = MyState.Error(
+                        R.string.request_error,
+                        orderMenuResult.e
                     )
                 }
             }

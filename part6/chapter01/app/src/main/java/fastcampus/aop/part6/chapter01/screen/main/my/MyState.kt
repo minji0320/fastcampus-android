@@ -3,6 +3,7 @@ package fastcampus.aop.part6.chapter01.screen.main.my
 import android.net.Uri
 import androidx.annotation.StringRes
 import fastcampus.aop.part6.chapter01.data.entity.OrderEntity
+import fastcampus.aop.part6.chapter01.model.restaurant.order.OrderModel
 
 sealed class MyState {
 
@@ -19,7 +20,7 @@ sealed class MyState {
         data class Registered(
             val userName: String,
             val profileImageUri: Uri?,
-            val orderList: List<OrderEntity>
+            val orderList: List<OrderModel>
         ) : Success()
 
         object NotRegistered : Success()
