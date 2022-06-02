@@ -8,9 +8,10 @@ interface OrderRepository {
         userId: String,
         restaurantId: Long,
         foodMenuList: List<RestaurantFoodEntity>,
+        restaurantTitle: String,
     ): DefaultOrderRepository.Result
 
     suspend fun getAllOrderMenus(
-        userId: String
+        userId: String,
     ): DefaultOrderRepository.Result
 }

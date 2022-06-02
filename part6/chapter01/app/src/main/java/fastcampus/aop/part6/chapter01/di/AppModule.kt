@@ -1,7 +1,9 @@
 package fastcampus.aop.part6.chapter01.di
 
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import fastcampus.aop.part6.chapter01.data.entity.LocationLatLngEntity
 import fastcampus.aop.part6.chapter01.data.entity.MapSearchInfoEntity
 import fastcampus.aop.part6.chapter01.data.entity.RestaurantEntity
@@ -99,5 +101,7 @@ val appModule = module {
 
     // Firestore
     single { Firebase.firestore }
+    single { FirebaseAuth.getInstance() }
+    single { Firebase.storage }
 
 }
