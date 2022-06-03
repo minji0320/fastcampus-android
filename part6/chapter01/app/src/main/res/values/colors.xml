@@ -12,4 +12,8 @@
 
     <color name="orange_yellow">#FFCA42</color>
     <color name="brown">#914300</color>
+
+    <color name="gray">#B1B1B1</color>
+    <color name="gray_cc">#CCCCCC</color>
+    <color name="black_24">#3D000000</color>
 </resources>

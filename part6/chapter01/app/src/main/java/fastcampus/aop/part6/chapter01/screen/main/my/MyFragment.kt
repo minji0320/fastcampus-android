@@ -15,9 +15,11 @@ import fastcampus.aop.part6.chapter01.databinding.FragmentMyBinding
 import fastcampus.aop.part6.chapter01.extensions.load
 import fastcampus.aop.part6.chapter01.model.restaurant.order.OrderModel
 import fastcampus.aop.part6.chapter01.screen.base.BaseFragment
+import fastcampus.aop.part6.chapter01.screen.review.AddRestaurantReviewActivity
 import fastcampus.aop.part6.chapter01.util.provider.ResourcesProvider
 import fastcampus.aop.part6.chapter01.widget.adapter.ModelRecyclerAdapter
 import fastcampus.aop.part6.chapter01.widget.adapter.listener.AdapterListener
+import fastcampus.aop.part6.chapter01.widget.adapter.listener.order.OrderListListener
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -59,7 +61,16 @@ class MyFragment : BaseFragment<MyViewModel, FragmentMyBinding>() {
             listOf(),
             viewModel,
             resourcesProvider,
-            object : AdapterListener {}
+            object : OrderListListener {
+                override fun writeRestaurantReview(orderId: String, restaurantTitle: String) {
+                    startActivity(
+                        AddRestaurantReviewActivity.newIntent(
+                            requireContext(),
+                            orderId,
+                            restaurantTitle)
+                    )
+                }
+            }
         )
     }
 

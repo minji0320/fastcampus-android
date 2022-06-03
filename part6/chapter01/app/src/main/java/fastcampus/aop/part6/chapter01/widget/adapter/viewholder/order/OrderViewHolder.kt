@@ -6,6 +6,7 @@ import fastcampus.aop.part6.chapter01.model.restaurant.order.OrderModel
 import fastcampus.aop.part6.chapter01.screen.base.BaseViewModel
 import fastcampus.aop.part6.chapter01.util.provider.ResourcesProvider
 import fastcampus.aop.part6.chapter01.widget.adapter.listener.AdapterListener
+import fastcampus.aop.part6.chapter01.widget.adapter.listener.order.OrderListListener
 import fastcampus.aop.part6.chapter01.widget.adapter.viewholder.ModelViewHolder
 
 class OrderViewHolder(
@@ -39,5 +40,11 @@ class OrderViewHolder(
         }
     }
 
-    override fun bindViews(model: OrderModel, adapterListener: AdapterListener) = Unit
+    override fun bindViews(model: OrderModel, adapterListener: AdapterListener) {
+        if (adapterListener is OrderListListener) {
+            binding.root.setOnClickListener {
+                adapterListener.writeRestaurantReview(model.orderId, model.restaurantTitle)
+            }
+        }
+    }
 }

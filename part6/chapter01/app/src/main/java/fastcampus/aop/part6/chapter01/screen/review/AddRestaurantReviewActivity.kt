@@ -15,7 +15,10 @@ import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import fastcampus.aop.part6.chapter01.data.entity.ReviewEntity
 import fastcampus.aop.part6.chapter01.databinding.ActivityAddRestaurantReviewBinding
+import fastcampus.aop.part6.chapter01.screen.review.camera.CameraActivity
+import fastcampus.aop.part6.chapter01.screen.review.gallery.GalleryActivity
 import fastcampus.aop.part6.chapter01.widget.adapter.PhotoListAdapter
 import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
@@ -40,15 +43,18 @@ class AddRestaurantReviewActivity : AppCompatActivity() {
         fun newIntent(
             context: Context,
             orderId: String,
-            restaurantTitle: String
+            restaurantTitle: String,
         ) = Intent(context, AddRestaurantReviewActivity::class.java).apply {
-            putExtra("orderId", orderId)
-            putExtra("restaurantTitle", restaurantTitle)
+            putExtra(ORDER_ID_KEY, orderId)
+            putExtra(RESTAURANT_TITLE_KEY, restaurantTitle)
         }
 
         const val PERMISSION_REQUEST_CODE = 1000
         const val GALLERY_REQUEST_CODE = 1001
         const val CAMERA_REQUEST_CODE = 1002
+
+        const val RESTAURANT_TITLE_KEY = "restaurantTitle"
+        const val ORDER_ID_KEY = "orderId"
     }
 
     private lateinit var binding: ActivityAddRestaurantReviewBinding
@@ -115,13 +121,24 @@ class AddRestaurantReviewActivity : AppCompatActivity() {
         return@withContext uploadDeferred.awaitAll()
     }
 
-    private fun afterUploadPhoto(results: List<Any>, title: String, content: String, rating: Float, userId: String) {
+    private fun afterUploadPhoto(
+        results: List<Any>,
+        title: String,
+        content: String,
+        rating: Float,
+        userId: String,
+    ) {
         val errorResults = results.filterIsInstance<Pair<Uri, Exception>>()
         val successResults = results.filterIsInstance<String>()
 
         when {
             errorResults.isNotEmpty() && successResults.isNotEmpty() -> {
-                photoUploadErrorButContinueDialog(errorResults, successResults, title, content, rating, userId)
+                photoUploadErrorButContinueDialog(errorResults,
+                    successResults,
+                    title,
+                    content,
+                    rating,
+                    userId)
             }
             errorResults.isNotEmpty() && successResults.isEmpty() -> {
                 uploadError()
@@ -132,17 +149,34 @@ class AddRestaurantReviewActivity : AppCompatActivity() {
         }
     }
 
-    private fun uploadArticle(userId: String, title: String, content: String, rating: Float, imageUrlList: List<String>) {
-        val reviewEntity = ReviewEntity(userId, title, System.currentTimeMillis(), content, rating, imageUrlList, orderId, restaurantTitle)
+    private fun uploadArticle(
+        userId: String,
+        title: String,
+        content: String,
+        rating: Float,
+        imageUrlList: List<String>,
+    ) {
+        val review = ReviewEntity(userId,
+            title,
+            System.currentTimeMillis(),
+            content,
+            rating,
+            imageUrlList,
+            orderId,
+            restaurantTitle)
         firestore
             .collection("review")
-            .add(reviewEntity)
+            .add(review)
         hideProgress()
         Toast.makeText(this, "리뷰가 성공적으로 업로드 되었습니다.", Toast.LENGTH_SHORT).show()
         finish()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray,
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         when (requestCode) {
@@ -241,7 +275,8 @@ class AddRestaurantReviewActivity : AppCompatActivity() {
                 showPermissionContextPopup()
             }
             else -> {
-                requestPermissions(arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE), PERMISSION_REQUEST_CODE)
+                requestPermissions(arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
+                    PERMISSION_REQUEST_CODE)
             }
         }
     }
@@ -251,7 +286,8 @@ class AddRestaurantReviewActivity : AppCompatActivity() {
             .setTitle("권한이 필요합니다.")
             .setMessage("사진을 가져오기 위해 필요합니다.")
             .setPositiveButton("동의") { _, _ ->
-                requestPermissions(arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE), PERMISSION_REQUEST_CODE)
+                requestPermissions(arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
+                    PERMISSION_REQUEST_CODE)
             }
             .create()
             .show()
@@ -264,7 +300,7 @@ class AddRestaurantReviewActivity : AppCompatActivity() {
         title: String,
         content: String,
         rating: Float,
-        userId: String
+        userId: String,
     ) {
         AlertDialog.Builder(this)
             .setTitle("특정 이미지 업로드 실패")
