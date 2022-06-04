@@ -29,6 +29,7 @@
                 android:layout_height="0dp"
                 android:layout_margin="4dp"
                 android:background="@drawable/bg_round_corner_8_black"
+                android:scaleType="centerCrop"
                 app:layout_constraintDimensionRatio="w,1:1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -41,8 +42,8 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:background="@drawable/bg_round_corner_8_black"
+                android:backgroundTint="@color/white"
                 android:foreground="@drawable/ic_close"
-                android:foregroundTint="@color/white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>

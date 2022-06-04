@@ -3,7 +3,7 @@ package fastcampus.aop.part6.chapter01.di
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
+import com.google.firebase.storage.FirebaseStorage
 import fastcampus.aop.part6.chapter01.data.entity.LocationLatLngEntity
 import fastcampus.aop.part6.chapter01.data.entity.MapSearchInfoEntity
 import fastcampus.aop.part6.chapter01.data.entity.RestaurantEntity
@@ -31,6 +31,8 @@ import fastcampus.aop.part6.chapter01.screen.main.like.RestaurantLikeListViewMod
 import fastcampus.aop.part6.chapter01.screen.main.my.MyViewModel
 import fastcampus.aop.part6.chapter01.screen.mylocation.MyLocationViewModel
 import fastcampus.aop.part6.chapter01.screen.order.OrderMenuListViewModel
+import fastcampus.aop.part6.chapter01.screen.review.gallery.GalleryPhotoRepository
+import fastcampus.aop.part6.chapter01.screen.review.gallery.GalleryViewModel
 import fastcampus.aop.part6.chapter01.util.event.MenuChangeEventBus
 import fastcampus.aop.part6.chapter01.util.provider.DefaultResourcesProvider
 import fastcampus.aop.part6.chapter01.util.provider.ResourcesProvider
@@ -61,6 +63,7 @@ val appModule = module {
     }
     viewModel { (restaurantTitle: String) -> RestaurantReviewListViewModel(restaurantTitle, get()) }
     viewModel { OrderMenuListViewModel(get(), get()) }
+    viewModel { GalleryViewModel(get()) }
 
     // Repository
     single<RestaurantRepository> { DefaultRestaurantRepository(get(), get(), get()) }
@@ -69,6 +72,8 @@ val appModule = module {
     single<RestaurantFoodRepository> { DefaultRestaurantFoodRepository(get(), get(), get()) }
     single<RestaurantReviewRepository> { DefaultRestaurantReviewRepository(get()) }
     single<OrderRepository> { DefaultOrderRepository(get(), get()) }
+    single { GalleryPhotoRepository(androidContext()) }
+
 
     // Retrofit
     single { provideGsonConvertFactory() }
@@ -102,6 +107,6 @@ val appModule = module {
     // Firestore
     single { Firebase.firestore }
     single { FirebaseAuth.getInstance() }
-    single { Firebase.storage }
+    single { FirebaseStorage.getInstance() }
 
 }
