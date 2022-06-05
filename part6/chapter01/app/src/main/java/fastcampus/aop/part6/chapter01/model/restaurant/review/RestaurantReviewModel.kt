@@ -9,7 +9,6 @@ class RestaurantReviewModel(
     override val type: CellType = CellType.REVIEW_CELL,
     val title: String,
     val description: String,
-    val grade: Int,
+    val grade: Float,
     val thumbnailImageUri: Uri? = null,
-) : Model(id, type) {
-}
+) : Model(id, type)
