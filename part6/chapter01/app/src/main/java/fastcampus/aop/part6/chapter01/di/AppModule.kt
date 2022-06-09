@@ -62,7 +62,7 @@ val appModule = module {
         RestaurantMenuListViewModel(restaurantId, foodEntityList, get())
     }
     viewModel { (restaurantTitle: String) -> RestaurantReviewListViewModel(restaurantTitle, get()) }
-    viewModel { OrderMenuListViewModel(get(), get()) }
+    viewModel { (firebaseAuth: FirebaseAuth) -> OrderMenuListViewModel(get(), get(), firebaseAuth) }
     viewModel { GalleryViewModel(get()) }
 
     // Repository

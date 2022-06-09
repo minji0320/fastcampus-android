@@ -8,7 +8,7 @@ import fastcampus.aop.part6.chapter01.screen.main.home.restaurant.RestaurantList
 import fastcampus.aop.part6.chapter01.screen.main.home.restaurant.RestaurantOrder
 import fastcampus.aop.part6.chapter01.viewmodel.ViewModelTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.koin.core.parameter.parametersOf
 import org.koin.test.inject
@@ -35,7 +35,7 @@ internal class RestaurantListViewModelTest : ViewModelTest() {
     }
 
     @Test
-    fun `test load restaurant list category ALL`() = runBlockingTest {
+    fun `test load restaurant list category ALL`() = runTest {
         val testObservable = restaurantListViewModel.restaurantListLiveData.test()
 
         restaurantListViewModel.fetchData()
@@ -61,7 +61,7 @@ internal class RestaurantListViewModelTest : ViewModelTest() {
     }
 
     @Test
-    fun `test load restaurant list category Excepted`() = runBlockingTest {
+    fun `test load restaurant list category Excepted`() = runTest {
         restaurantCategory = RestaurantCategory.CAFE_DESSERT
 
         val testObservable = restaurantListViewModel.restaurantListLiveData.test()
@@ -76,7 +76,7 @@ internal class RestaurantListViewModelTest : ViewModelTest() {
     }
 
     @Test
-    fun `test load restaurant list order by fast delivery time`() = runBlockingTest {
+    fun `test load restaurant list order by fast delivery time`() = runTest {
         val testObservable = restaurantListViewModel.restaurantListLiveData.test()
 
         restaurantListViewModel.setRestaurantOrder(RestaurantOrder.FAST_DELIVERY)
