@@ -5,6 +5,7 @@ import android.content.Intent
 import android.widget.Toast
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import com.google.firebase.auth.FirebaseAuth
 import fastcampus.aop.part6.chapter01.databinding.ActivityOrderMenuListBinding
 import fastcampus.aop.part6.chapter01.model.restaurant.food.FoodModel
 import fastcampus.aop.part6.chapter01.screen.base.BaseActivity
@@ -13,10 +14,15 @@ import fastcampus.aop.part6.chapter01.widget.adapter.ModelRecyclerAdapter
 import fastcampus.aop.part6.chapter01.widget.adapter.listener.order.OrderMenuListListener
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class OrderMenuListActivity : BaseActivity<OrderMenuListViewModel, ActivityOrderMenuListBinding>() {
 
-    override val viewModel by viewModel<OrderMenuListViewModel>()
+    private val firebaseAuth by inject<FirebaseAuth>()
+
+    override val viewModel by viewModel<OrderMenuListViewModel> {
+        parametersOf(firebaseAuth)
+    }
 
     override fun getViewBinding() = ActivityOrderMenuListBinding.inflate(layoutInflater)
 
